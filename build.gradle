@@ -15,7 +15,6 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
-    implementation group: 'io.github.classgraph', name: 'classgraph', version: '4.8.141'
     implementation 'com.github.Xirado:JDA:36eea2a1c55f56ab2edfc8a5fde65921b67fc272'
 //    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.9'
 
