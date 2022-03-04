@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+}
+
+mainClassName = 'nl.tijsbeek.Application'
+group 'nl.tijsbeek'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:23.0.0'
+    implementation group: 'io.github.classgraph', name: 'classgraph', version: '4.8.141'
+    implementation 'com.github.Xirado:JDA:36eea2a1c55f56ab2edfc8a5fde65921b67fc272'
+//    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.9'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava.options.encoding = 'UTF-8'
