@@ -18,6 +18,8 @@ dependencies {
     implementation 'com.github.Xirado:JDA:36eea2a1c55f56ab2edfc8a5fde65921b67fc272'
 //    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.9'
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
