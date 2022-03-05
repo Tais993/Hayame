@@ -24,6 +24,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
     private final Collection<Long> enabledGuilds = new ArrayList<>(0);
     private final Collection<Permission> requiredUserPermission = new ArrayList<>(0);
     private final Collection<Permission> requiredBotPermission = new ArrayList<>(0);
+
     private final InteractionCommandState state;
 
     protected AbstractInteractionCommand(@NotNull final CommandData data, @NotNull final InteractionCommandVisibility visibility,
@@ -37,26 +38,13 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
         enabledGuilds.addAll(List.of(guildIds));
     }
 
-    protected final void resetEnabledGuilds() {
-        enabledGuilds.clear();
-    }
-
     protected final void addRequiredUserPermission(@NotNull final Permission... userPermissions) {
         requiredUserPermission.addAll(List.of(userPermissions));
-    }
-
-    protected final void resetRequiredUserPermission() {
-        requiredUserPermission.clear();
     }
 
     protected final void addRequiredBotPermission(@NotNull final Permission... botPermissions) {
         requiredBotPermission.addAll(List.of(botPermissions));
     }
-
-    protected final void resetRequiredBotPermission() {
-        requiredBotPermission.clear();
-    }
-
 
     @NotNull
     @Override
