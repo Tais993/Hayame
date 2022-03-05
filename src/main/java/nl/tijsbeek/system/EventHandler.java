@@ -1,9 +1,10 @@
-package nl.tijsbeek.events;
+package nl.tijsbeek.system;
 
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import nl.tijsbeek.events.CustomEventListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,8 +16,9 @@ import java.util.stream.Collectors;
 public class EventHandler implements EventListener {
     private final List<CustomEventListener> listeners;
 
-    public EventHandler() {
-        listeners = EventList.getCommands();
+    @Contract(pure = true)
+    public EventHandler(@NotNull final ListenersList listenersList) {
+        listeners = listenersList.getEventListeners();
     }
 
     @NotNull

@@ -1,4 +1,4 @@
-package nl.tijsbeek.commands.system;
+package nl.tijsbeek.system;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -44,8 +44,8 @@ public class CommandHandler extends ListenerAdapter {
     private final List<InteractionCommand> commands;
 
 
-    public CommandHandler() {
-        commands = CommandList.getCommands();
+    public CommandHandler(@NotNull final ListenersList listenersList) {
+        commands = listenersList.getCommands();
 
         nameToInteractionCommand = streamToMap(commands.stream());
         nameToSlashCommandCommand = filterCommandsToMap(SlashCommand.class, commands.stream());

@@ -1,8 +1,9 @@
 package nl.tijsbeek;
 
 import net.dv8tion.jda.api.JDABuilder;
-import nl.tijsbeek.commands.system.CommandHandler;
-import nl.tijsbeek.events.EventHandler;
+import nl.tijsbeek.system.CommandHandler;
+import nl.tijsbeek.system.EventHandler;
+import nl.tijsbeek.system.ListenersList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -23,8 +24,10 @@ public final class Application {
 
         String token = args[0];
 
-        CommandHandler commandHandler = new CommandHandler();
-        EventHandler eventHandler = new EventHandler();
+        ListenersList listenersList = new ListenersList();
+
+        CommandHandler commandHandler = new CommandHandler(listenersList);
+        EventHandler eventHandler = new EventHandler(listenersList);
 
         JDABuilder.create(token, eventHandler.getGatewayIntents())
                 .enableCache(eventHandler.getCacheFlags())
