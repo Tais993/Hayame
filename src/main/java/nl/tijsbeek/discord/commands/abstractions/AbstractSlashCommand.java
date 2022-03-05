@@ -1,9 +1,9 @@
-package nl.tijsbeek.commands.abstractions;
+package nl.tijsbeek.discord.commands.abstractions;
 
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import nl.tijsbeek.commands.InteractionCommandState;
-import nl.tijsbeek.commands.InteractionCommandVisibility;
-import nl.tijsbeek.commands.SlashCommand;
+import nl.tijsbeek.discord.commands.InteractionCommandState;
+import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
+import nl.tijsbeek.discord.commands.SlashCommand;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractSlashCommand extends AbstractInteractionCommand implements SlashCommand {

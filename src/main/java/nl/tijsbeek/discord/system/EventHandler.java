@@ -1,10 +1,10 @@
-package nl.tijsbeek.system;
+package nl.tijsbeek.discord.system;
 
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import nl.tijsbeek.events.CustomEventListener;
+import nl.tijsbeek.discord.events.CustomEventListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

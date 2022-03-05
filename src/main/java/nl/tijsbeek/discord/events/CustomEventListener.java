@@ -1,4 +1,4 @@
-package nl.tijsbeek.events;
+package nl.tijsbeek.discord.events;
 
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;

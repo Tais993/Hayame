@@ -1,13 +1,13 @@
-package nl.tijsbeek.commands.abstractions;
+package nl.tijsbeek.discord.commands.abstractions;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import nl.tijsbeek.commands.InteractionCommand;
-import nl.tijsbeek.commands.InteractionCommandState;
-import nl.tijsbeek.commands.InteractionCommandVisibility;
+import nl.tijsbeek.discord.commands.InteractionCommand;
+import nl.tijsbeek.discord.commands.InteractionCommandState;
+import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;

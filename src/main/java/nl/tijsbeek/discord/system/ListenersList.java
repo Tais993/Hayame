@@ -1,7 +1,7 @@
-package nl.tijsbeek.system;
+package nl.tijsbeek.discord.system;
 
-import nl.tijsbeek.commands.InteractionCommand;
-import nl.tijsbeek.events.CustomEventListener;
+import nl.tijsbeek.discord.commands.InteractionCommand;
+import nl.tijsbeek.discord.events.CustomEventListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;

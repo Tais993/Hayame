@@ -1,4 +1,4 @@
-package nl.tijsbeek.commands;
+package nl.tijsbeek.discord.commands;
 
 public enum InteractionCommandState {
     ENABLED,

@@ -1,9 +1,9 @@
 package nl.tijsbeek;
 
 import net.dv8tion.jda.api.JDABuilder;
-import nl.tijsbeek.system.CommandHandler;
-import nl.tijsbeek.system.EventHandler;
-import nl.tijsbeek.system.ListenersList;
+import nl.tijsbeek.discord.system.CommandHandler;
+import nl.tijsbeek.discord.system.EventHandler;
+import nl.tijsbeek.discord.system.ListenersList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package nl.tijsbeek.system;
+package nl.tijsbeek.discord.system;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import nl.tijsbeek.commands.*;
 import nl.tijsbeek.utils.EmbedUtils;
 import nl.tijsbeek.utils.StreamUtils;
 import org.jetbrains.annotations.Contract;

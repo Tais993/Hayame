@@ -1,4 +1,4 @@
-package nl.tijsbeek.commands;
+package nl.tijsbeek.discord.commands;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
