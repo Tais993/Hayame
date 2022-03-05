@@ -2,7 +2,7 @@ package nl.tijsbeek;
 
 import net.dv8tion.jda.api.JDABuilder;
 import nl.tijsbeek.commands.system.CommandHandler;
-import nl.tijsbeek.commands.system.EventHandler;
+import nl.tijsbeek.events.EventHandler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

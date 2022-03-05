@@ -1,4 +1,4 @@
-package nl.tijsbeek.commands;
+package nl.tijsbeek.events;
 
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;

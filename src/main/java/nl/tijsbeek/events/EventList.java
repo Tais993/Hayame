@@ -1,6 +1,5 @@
-package nl.tijsbeek.commands.system;
+package nl.tijsbeek.events;
 
-import nl.tijsbeek.commands.CustomEventListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
