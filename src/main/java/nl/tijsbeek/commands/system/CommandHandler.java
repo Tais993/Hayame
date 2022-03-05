@@ -1,6 +1,8 @@
 package nl.tijsbeek.commands.system;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -13,10 +15,8 @@ import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
-import nl.tijsbeek.commands.InteractionCommand;
-import nl.tijsbeek.commands.MessageContextCommand;
-import nl.tijsbeek.commands.SlashCommand;
-import nl.tijsbeek.commands.UserContextCommand;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import nl.tijsbeek.commands.*;
 import nl.tijsbeek.utils.EmbedUtils;
 import nl.tijsbeek.utils.StreamUtils;
 import org.jetbrains.annotations.Contract;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,6 +52,53 @@ public class CommandHandler extends ListenerAdapter {
         nameToUserContextCommand = filterCommandsToMap(UserContextCommand.class, commands.stream());
         nameToMessageContextCommand = filterCommandsToMap(MessageContextCommand.class, commands.stream());
     }
+
+    public void updateCommands(@NotNull final JDA jda) {
+        jda.updateCommands().addCommands(
+                commands.stream()
+                        .filter(isVisibility(InteractionCommandVisibility.GLOBAL))
+                        .map(InteractionCommand::getData)
+                        .toList()
+        ).queue();
+
+
+        List<CommandData> guildCommands = commands.stream()
+                .filter(isVisibility(InteractionCommandVisibility.GUILD_ONLY))
+                .map(InteractionCommand::getData)
+                .toList();
+
+        jda.getGuildCache().forEach(guild -> {
+            guild.updateCommands()
+                    .addCommands(guildCommands)
+                    .addCommands(getPrivateEnabledCommands(guild))
+                    .queue();
+        });
+    }
+
+    private List<CommandData> getPrivateEnabledCommands(@NotNull final Guild guild) {
+        return commands.stream()
+                .filter(isVisibility(InteractionCommandVisibility.PRIVATE))
+                .filter(isEnabledInGuild(guild))
+                .map(InteractionCommand::getData)
+                .toList();
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    private static Predicate<? super InteractionCommand> isEnabledInGuild(@NotNull final Guild guild) {
+        return (interactionCommand -> {
+            return interactionCommand.getEnabledGuilds().contains(guild.getIdLong());
+        });
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    private static Predicate<? super InteractionCommand> isVisibility(@NotNull final InteractionCommandVisibility visibility) {
+        return (interactionCommand -> {
+            return interactionCommand.getVisibility() == visibility;
+        });
+    }
+
 
     private static <T extends InteractionCommand> Map<String, T> filterCommandsToMap(final @NotNull Class<? extends T> clazz, @NotNull final Stream<? super T> commands) {
         return streamToMap(commands
