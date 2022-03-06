@@ -88,6 +88,24 @@ public final class ComponentDatabase {
         }
     }
 
+
+    public void remove(@NotNull final String id) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement("""
+                     DELETE FROM discordbot.component
+                     WHERE id = ?
+                     """)) {
+
+            statement.setObject(1, id);
+
+            statement.execute();
+
+        } catch (SQLException e) {
+            logger.error("Something went wrong while inserting a component into the DB.", e);
+        }
+    }
+
+
     @NotNull
     @Contract("_ -> new")
     public ComponentEntity retrieveComponentEntity(@NotNull final String id) {
