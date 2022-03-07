@@ -2,6 +2,7 @@ package nl.tijsbeek;
 
 import net.dv8tion.jda.api.JDABuilder;
 import nl.tijsbeek.config.Config;
+import nl.tijsbeek.discord.components.ComponentDatabase;
 import nl.tijsbeek.discord.system.CommandHandler;
 import nl.tijsbeek.discord.system.EventHandler;
 import nl.tijsbeek.discord.system.ListenersList;
@@ -28,9 +29,11 @@ public final class Application {
 
         Config config = Config.loadInstance(configLocation);
 
+        ComponentDatabase componentHandler = new ComponentDatabase(config);
+
         ListenersList listenersList = new ListenersList();
 
-        CommandHandler commandHandler = new CommandHandler(listenersList);
+        CommandHandler commandHandler = new CommandHandler(componentHandler, listenersList);
         EventHandler eventHandler = new EventHandler(listenersList);
 
         JDABuilder.create(config.getDiscordToken(), eventHandler.getGatewayIntents())

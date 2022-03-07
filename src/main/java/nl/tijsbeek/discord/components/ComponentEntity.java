@@ -42,6 +42,14 @@ public class ComponentEntity {
         return expireDate;
     }
 
+    public boolean isExpired() {
+        if (expireDate == null) {
+            return false;
+        } else {
+            return LocalDateTime.now().isAfter(expireDate);
+        }
+    }
+
     @NotNull
     @Unmodifiable
     public List<String> getArguments() {

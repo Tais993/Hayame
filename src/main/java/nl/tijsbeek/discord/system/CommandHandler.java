@@ -16,6 +16,15 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.ActionComponent;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import nl.tijsbeek.discord.commands.*;
+import nl.tijsbeek.discord.components.ComponentDatabase;
+import nl.tijsbeek.discord.components.ComponentEntity;
 import nl.tijsbeek.utils.EmbedUtils;
 import nl.tijsbeek.utils.StreamUtils;
 import org.jetbrains.annotations.Contract;
@@ -35,6 +44,8 @@ import java.util.stream.Stream;
 public class CommandHandler extends ListenerAdapter {
     private final ForkJoinPool pool = ForkJoinPool.commonPool();
 
+    private final ComponentDatabase componentDatabase;
+
     private final Map<String, InteractionCommand> nameToInteractionCommand;
     private final Map<String, SlashCommand> nameToSlashCommandCommand;
     private final Map<String, UserContextCommand> nameToUserContextCommand;
@@ -43,7 +54,9 @@ public class CommandHandler extends ListenerAdapter {
     private final List<InteractionCommand> commands;
 
 
-    public CommandHandler(@NotNull final ListenersList listenersList) {
+    public CommandHandler(@NotNull final ComponentDatabase componentDatabase, @NotNull final ListenersList listenersList) {
+        this.componentDatabase = componentDatabase;
+
         commands = listenersList.getCommands();
 
         nameToInteractionCommand = streamToMap(commands.stream());
@@ -111,15 +124,89 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onSelectMenuInteraction(@NotNull final SelectMenuInteractionEvent event) {
+        String id = event.getId();
+
+        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+
+        if (componentEntity.isExpired()) {
+            expireComponentsMessage(event);
+        } else {
+            InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
+
+            if (command != null) {
+                command.onSelectMenuInteraction(event);
+            }
+        }
     }
 
     @Override
     public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
+        String id = event.getId();
+
+        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+
+        if (componentEntity.isExpired()) {
+            expireComponentsMessage(event);
+        } else {
+            InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
+
+            if (command != null) {
+                command.onButtonInteraction(event);
+            }
+        }
     }
 
     @Override
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
+        String id = event.getId();
+
+        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+
+        InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
+
+        if (command != null) {
+            command.onModalInteraction(event);
+        }
     }
+
+
+    private void expireComponentsMessage(@NotNull final ComponentInteraction event) {
+        List<ActionRow> components = event.getMessage().getActionRows()
+                .stream()
+                .map(actionRow -> {
+                    return ActionRow.of(actionRow.getComponents().stream()
+                            .map(this::disableComponentWhenExpired)
+                            .toList());
+                }).toList();
+
+        event.editComponents(components).queue();
+    }
+
+    private ItemComponent disableComponentWhenExpired(@NotNull final ItemComponent component) {
+
+        if (!(component instanceof ActionComponent actionComponent)) {
+            return component;
+        }
+
+        if (actionComponent.getId() == null) {
+            return component;
+        }
+
+        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(actionComponent.getId());
+
+        if (!componentEntity.isExpired()) {
+            return component;
+        }
+
+        if (component instanceof Button button) {
+            return button.asDisabled();
+        } else if (component instanceof SelectMenu selectMenu) {
+            return selectMenu.asDisabled();
+        } else {
+            return component;
+        }
+    }
+
 
     @Override
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
