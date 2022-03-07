@@ -1,6 +1,7 @@
 package nl.tijsbeek.discord.events;
 
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,7 @@ import java.util.Collection;
  * Adds event support for classes.
  *
  * @see AbstractEventListener
+ * @see ListenerAdapter
  */
 public interface CustomEventListener extends EventListener {
 
