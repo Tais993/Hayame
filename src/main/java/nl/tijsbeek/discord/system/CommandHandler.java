@@ -68,6 +68,7 @@ public class CommandHandler extends ListenerAdapter {
     public void updateCommands(@NotNull final JDA jda) {
         jda.updateCommands().addCommands(
                 commands.stream()
+                        .filter(CommandHandler::isEnabled)
                         .filter(isVisibility(InteractionCommandVisibility.GLOBAL))
                         .map(InteractionCommand::getData)
                         .toList()
@@ -75,6 +76,7 @@ public class CommandHandler extends ListenerAdapter {
 
 
         List<CommandData> guildCommands = commands.stream()
+                .filter(CommandHandler::isEnabled)
                 .filter(isVisibility(InteractionCommandVisibility.GUILD_ONLY))
                 .map(InteractionCommand::getData)
                 .toList();
@@ -87,8 +89,13 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    private static boolean isEnabled(@NotNull final InteractionCommand interactionCommand) {
+        return interactionCommand.getState() == InteractionCommandState.ENABLED;
+    }
+
     private List<CommandData> getPrivateEnabledCommands(@NotNull final Guild guild) {
         return commands.stream()
+                .filter(CommandHandler::isEnabled)
                 .filter(isVisibility(InteractionCommandVisibility.PRIVATE))
                 .filter(isEnabledInGuild(guild))
                 .map(InteractionCommand::getData)
