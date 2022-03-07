@@ -198,6 +198,8 @@ public class CommandHandler extends ListenerAdapter {
             return component;
         }
 
+        componentDatabase.remove(componentEntity.getId());
+
         if (component instanceof Button button) {
             return button.asDisabled();
         } else if (component instanceof SelectMenu selectMenu) {
