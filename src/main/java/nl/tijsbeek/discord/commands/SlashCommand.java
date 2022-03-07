@@ -1,5 +1,6 @@
 package nl.tijsbeek.discord.commands;
 
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
@@ -11,4 +12,6 @@ public interface SlashCommand extends InteractionCommand {
     SlashCommandData getData();
 
     void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event);
+
+    void onCommandAutoCompleteInteractionEvent(@NotNull CommandAutoCompleteInteractionEvent event);
 }

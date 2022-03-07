@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
@@ -234,6 +235,14 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    @Override
+    public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
+        pool.execute(() -> {
+            SlashCommand command = nameToSlashCommandCommand.get(event.getName());
+
+            command.onCommandAutoCompleteInteractionEvent(event);
+        });
+    }
 
     @Override
     public void onUserContextInteraction(@NotNull final UserContextInteractionEvent event) {
@@ -250,7 +259,13 @@ public class CommandHandler extends ListenerAdapter {
     public void onMessageContextInteraction(@NotNull final MessageContextInteractionEvent event) {
         pool.execute(() -> {
             if (checkCanRunGeneralCommand(nameToMessageContextCommand, event)) {
+
                 MessageContextCommand command = nameToMessageContextCommand.get(event.getName());
+
+                if (null == command) {
+                    event.reply("Something went wrong.").queue();
+                    throw new IllegalStateException("%s with the name %s wasn't found! Something went extremely wrong.".formatted(event.getCommandType(), event.getName()));
+                }
 
                 command.onMessageContextInteraction(event);
             }

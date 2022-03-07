@@ -1,5 +1,6 @@
 package nl.tijsbeek.discord.commands.abstractions;
 
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import nl.tijsbeek.discord.commands.InteractionCommandState;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
@@ -19,5 +20,10 @@ public abstract class AbstractSlashCommand extends AbstractInteractionCommand im
     @SuppressWarnings("SuspiciousGetterSetter")
     public @NotNull SlashCommandData getData() {
         return commandData;
+    }
+
+    @Override
+    public void onCommandAutoCompleteInteractionEvent(@NotNull CommandAutoCompleteInteractionEvent event) {
+        
     }
 }
