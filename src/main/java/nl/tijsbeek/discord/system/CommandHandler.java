@@ -124,49 +124,55 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onSelectMenuInteraction(@NotNull final SelectMenuInteractionEvent event) {
-        String id = event.getId();
+        pool.execute(() -> {
+            String id = event.getId();
 
-        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+            ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
 
-        if (componentEntity.isExpired()) {
-            expireComponentsMessage(event);
-        } else {
-            InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
+            if (componentEntity.isExpired()) {
+                expireComponentsMessage(event);
+            } else {
+                InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
 
-            if (command != null) {
-                command.onSelectMenuInteraction(event);
+                if (command != null) {
+                    command.onSelectMenuInteraction(event);
+                }
             }
-        }
+        });
     }
 
     @Override
     public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
-        String id = event.getId();
+        pool.execute(() -> {
+            String id = event.getId();
 
-        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+            ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
 
-        if (componentEntity.isExpired()) {
-            expireComponentsMessage(event);
-        } else {
-            InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
+            if (componentEntity.isExpired()) {
+                expireComponentsMessage(event);
+            } else {
+                InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
 
-            if (command != null) {
-                command.onButtonInteraction(event);
+                if (command != null) {
+                    command.onButtonInteraction(event);
+                }
             }
-        }
+        });
     }
 
     @Override
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
-        String id = event.getId();
+        pool.execute(() -> {
+            String id = event.getId();
 
-        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+            ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
 
-        InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
+            InteractionCommand command = nameToInteractionCommand.get(componentEntity.getListenerId());
 
-        if (command != null) {
-            command.onModalInteraction(event);
-        }
+            if (command != null) {
+                command.onModalInteraction(event);
+            }
+        });
     }
 
 
