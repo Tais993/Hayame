@@ -17,6 +17,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * An abstraction of {@link InteractionCommand} with the intention to improve developer experience.
+ * <p/>
+ * This implements methods like {@link #getData()}, {@link #getVisibility()} and {@link #getState()} for you. Their values are
+ * inserted within the constructor.
+ * <p/>
+ * Methods like {@link #addEnabledGuilds(Long...)}, {@link #addRequiredBotPermission(Permission...)} and {@link #addRequiredUserPermission(Permission...)} exist to improve the experience.
+ */
 public abstract class AbstractInteractionCommand implements InteractionCommand {
 
     private final CommandData data;
@@ -34,14 +42,29 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
         this.state = state;
     }
 
+    /**
+     * Adds the given guild ID's to a List that will be returned when calling {@link #getEnabledGuilds()}
+     *
+     * @param guildIds an array of guild ids
+     */
     protected final void addEnabledGuilds(@NotNull final Long... guildIds) {
         enabledGuilds.addAll(List.of(guildIds));
     }
 
+    /**
+     * Adds the given {@link Permission permissions} to a List that will be returned when calling {@link #getRequiredUserPermission()}
+     *
+     * @param userPermissions an array of {@link Permission permissions} the user needs
+     */
     protected final void addRequiredUserPermission(@NotNull final Permission... userPermissions) {
         requiredUserPermission.addAll(List.of(userPermissions));
     }
 
+    /**
+     * Adds the given {@link Permission permissions} to a List that will be returned when calling {@link #getRequiredBotPermission()}
+     *
+     * @param botPermissions an array of {@link Permission permissions} the bot needs
+     */
     protected final void addRequiredBotPermission(@NotNull final Permission... botPermissions) {
         requiredBotPermission.addAll(List.of(botPermissions));
     }
