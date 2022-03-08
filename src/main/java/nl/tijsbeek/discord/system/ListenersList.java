@@ -10,11 +10,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Contains a list of all {@link InteractionCommand InteractionCommands} and {@link CustomEventListener CustomEventListeners}.
+ */
 public class ListenersList {
 
     private final List<InteractionCommand> commands;
     private final List<CustomEventListener> eventListeners;
 
+    /**
+     * Creates an instance.
+     */
     public ListenersList() {
         List<CustomEventListener> eventListeners = new ArrayList<>(20);
 
@@ -32,6 +38,11 @@ public class ListenersList {
         this.commands = commands;
     }
 
+    /**
+     * Returns all {@link InteractionCommand InteractionCommands} in a {@link List}.
+     *
+     * @return a {@link List} of {@link InteractionCommand InteractionCommands}
+     */
     @NotNull
     @UnmodifiableView
     @Contract(pure = true)
@@ -39,6 +50,11 @@ public class ListenersList {
         return Collections.unmodifiableList(commands);
     }
 
+    /**
+     * Returns all {@link CustomEventListener CustomEventListeners} in a {@link List}.
+     *
+     * @return a {@link List} of {@link CustomEventListener CustomEventListeners}
+     */
     @NotNull
     @UnmodifiableView
     @Contract(pure = true)
