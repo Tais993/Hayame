@@ -432,6 +432,8 @@ public class CommandHandler extends ListenerAdapter {
      */
     private static boolean checkCanRunGeneralCommand(@NotNull final Map<String, ? extends InteractionCommand> nameToCommand,
                                                      @NotNull final CommandInteraction event) {
+        //noinspection resource - observeDuration closes it
+        Histogram.Timer preCommandDuration = Metrics.GENERIC_COMMAND_HANDLING_DURATION.labels(event.getCommandType().name(), event.getName()).startTimer();
 
         String commandName = event.getName();
 
@@ -443,8 +445,6 @@ public class CommandHandler extends ListenerAdapter {
         }
 
         Metrics.GENERIC_COMMANDS.labels(command.getType().name(), command.getVisibility().name(), command.getName()).inc();
-        //noinspection resource - observeDuration closes it
-        Histogram.Timer preCommandDuration = Metrics.GENERIC_COMMAND_HANDLING_DURATION.labels(command.getType().name(), command.getVisibility().name(), command.getName()).startTimer();
 
         boolean canRun = switch (command.getVisibility()) {
             case GLOBAL -> checkCanRunGlobalCommand(event, command);
@@ -452,7 +452,7 @@ public class CommandHandler extends ListenerAdapter {
             case PRIVATE -> checkCanRunPrivateCommand(event, command);
         };
 
-        preCommandDuration.observeDurationWithExemplar();
+        preCommandDuration.observeDuration();
         return canRun;
     }
 

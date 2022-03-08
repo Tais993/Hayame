@@ -23,7 +23,7 @@ public class Metrics {
             .name("commands_handling_duration")
             .help("Duration of command handling, before the command runs")
             .subsystem("bot")
-            .labelNames("type", "visibility", "command")
+            .labelNames("type", "command")
             .register();
 
     public static final Histogram GENERIC_COMMAND_INVOCATION_DURATION = Histogram.build()

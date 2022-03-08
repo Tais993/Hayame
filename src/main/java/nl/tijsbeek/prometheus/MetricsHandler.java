@@ -25,7 +25,7 @@ public class MetricsHandler implements EventListener {
 
         DefaultExports.initialize();
         try {
-            new HTTPServer(9091);
+            new HTTPServer(config.getPrometheusPort());
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -15,6 +15,7 @@ import java.io.IOException;
 public class Config {
 
     private final String discordToken;
+    private final int prometheusPort;
     private final String databasePort;
     private final String databaseUsername;
     private final String databasePassword;
@@ -23,6 +24,7 @@ public class Config {
      * Creates an instance
      *
      * @param discordToken the discord-token
+     * @param prometheusPort the port to run prometheus on
      * @param databasePort the port of the DB
      * @param databaseUsername the username of the DB
      * @param databasePassword the password of the DB
@@ -30,11 +32,13 @@ public class Config {
     @JsonCreator
     @Contract(pure = true)
     public Config(@JsonProperty("discord_token") String discordToken,
+                  @JsonProperty("prometheus_port") String prometheusPort,
                   @JsonProperty("database_port") String databasePort,
                   @JsonProperty("database_username") String databaseUsername,
                   @JsonProperty("database_password") String databasePassword) {
 
         this.discordToken = discordToken;
+        this.prometheusPort = Integer.parseInt(prometheusPort);
         this.databasePort = databasePort;
         this.databaseUsername = databaseUsername;
         this.databasePassword = databasePassword;
@@ -46,6 +50,14 @@ public class Config {
      */
     public String getDiscordToken() {
         return discordToken;
+    }
+
+    /**
+     * the port to run prometheus on
+     * @return the port to run prometheus on
+     */
+    public int getPrometheusPort() {
+        return prometheusPort;
     }
 
     /**
