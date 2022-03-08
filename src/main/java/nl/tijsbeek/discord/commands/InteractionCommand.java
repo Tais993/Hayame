@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
 import nl.tijsbeek.discord.components.ComponentDatabase;
@@ -36,6 +37,15 @@ public interface InteractionCommand {
     @NotNull
     default String getName() {
         return getData().getName();
+    }
+
+    /**
+     * A shortcut of {@link #getData()}, {@link CommandData#getType()}.
+     *
+     * @return the type of this command
+     */
+    default Command.Type getType() {
+        return getData().getType();
     }
 
     /**

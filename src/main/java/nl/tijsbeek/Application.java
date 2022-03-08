@@ -3,6 +3,10 @@ package nl.tijsbeek;
 import net.dv8tion.jda.api.JDABuilder;
 import nl.tijsbeek.config.Config;
 import nl.tijsbeek.discord.components.ComponentDatabase;
+import nl.tijsbeek.discord.system.CommandHandler;
+import nl.tijsbeek.discord.system.EventHandler;
+import nl.tijsbeek.discord.system.ListenersList;
+import nl.tijsbeek.prometheus.MetricsHandler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -39,14 +43,19 @@ public final class Application {
 
         ComponentDatabase componentHandler = new ComponentDatabase(config);
 
-//        ListenersList listenersList = new ListenersList();
-//
-//        CommandHandler commandHandler = new CommandHandler(componentHandler, listenersList);
-//        EventHandler eventHandler = new EventHandler(listenersList);
-//
-//        JDABuilder.create(config.getDiscordToken(), eventHandler.getGatewayIntents())
-//                .enableCache(eventHandler.getCacheFlags())
-//                .addEventListeners(commandHandler, eventHandler)
-//                .build();
+        ListenersList listenersList = new ListenersList();
+
+        CommandHandler commandHandler = new CommandHandler(componentHandler, listenersList);
+        EventHandler eventHandler = new EventHandler(listenersList);
+
+        MetricsHandler matricsHandler = new MetricsHandler(commandHandler, config);
+
+        JDABuilder.create(config.getDiscordToken(), eventHandler.getGatewayIntents())
+                .enableCache(eventHandler.getCacheFlags())
+                .addEventListeners(commandHandler, eventHandler, matricsHandler)
+                .build();
+
+
+        System.out.println(Runtime.getRuntime().availableProcessors());
     }
 }

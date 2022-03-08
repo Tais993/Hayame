@@ -29,6 +29,12 @@ dependencies {
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
     implementation 'com.zaxxer:HikariCP:5.0.1'
 
+    /* Prometheus */
+    implementation 'io.prometheus:simpleclient:0.15.0'
+    implementation 'io.prometheus:simpleclient_hotspot:0.15.0'
+    implementation 'io.prometheus:simpleclient_httpserver:0.15.0'
+    implementation 'io.prometheus:simpleclient_pushgateway:0.15.0'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
