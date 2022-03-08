@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.text.Modal;
 import nl.tijsbeek.discord.commands.*;
 import nl.tijsbeek.discord.components.ComponentDatabase;
 import nl.tijsbeek.discord.components.ComponentEntity;
@@ -42,6 +43,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The command handler.
+ * <br/>
+ * A command handler registers all {@link InteractionCommand InteractionCommands} to Discord, and will forward their events.
+ * All commands have to be added to {@link ListenersList}, otherwise they will be ignored.
+ */
 public class CommandHandler extends ListenerAdapter {
     private final ForkJoinPool pool = ForkJoinPool.commonPool();
 
@@ -55,6 +62,12 @@ public class CommandHandler extends ListenerAdapter {
     private final List<InteractionCommand> commands;
 
 
+    /**
+     * Creates an instance based of {@link ListenersList#getCommands()}.
+     *
+     * @param componentDatabase the {@link ComponentDatabase} for components
+     * @param listenersList the {@link ListenersList} which contains all commands
+     */
     public CommandHandler(@NotNull final ComponentDatabase componentDatabase, @NotNull final ListenersList listenersList) {
         this.componentDatabase = componentDatabase;
 
@@ -66,6 +79,11 @@ public class CommandHandler extends ListenerAdapter {
         nameToMessageContextCommand = filterCommandsToMap(MessageContextCommand.class, commands.stream());
     }
 
+    /**
+     * Registers all the commands coming from the {@link ListenersList} in the constructor to Discord.
+     *
+     * @param jda the {@link JDA} instance to register on
+     */
     public void updateCommands(@NotNull final JDA jda) {
         jda.updateCommands().addCommands(
                 commands.stream()
@@ -90,10 +108,24 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    /**
+     * Whenever the {@link InteractionCommand} is enabled, this is defined by {@link InteractionCommand#getState()}.
+     *
+     * @param interactionCommand the {@link InteractionCommand} to check
+     *
+     * @return whenever the {@link InteractionCommand#getState()} is {@link InteractionCommandState#ENABLED}
+     */
     private static boolean isEnabled(@NotNull final InteractionCommand interactionCommand) {
         return interactionCommand.getState() == InteractionCommandState.ENABLED;
     }
 
+    /**
+     * Returns all commands that are enabled in the given {@link Guild}.
+     *
+     * @param guild the {@link Guild} to check on
+     *
+     * @return a {@link List} of commands that are enabled
+     */
     private List<CommandData> getPrivateEnabledCommands(@NotNull final Guild guild) {
         return commands.stream()
                 .filter(CommandHandler::isEnabled)
@@ -103,6 +135,13 @@ public class CommandHandler extends ListenerAdapter {
                 .toList();
     }
 
+    /**
+     * Creates a {@link Predicate} that checks whenever the command is enabled in the given {@link Guild}.
+     *
+     * @param guild the {@link Guild} to check on
+     *
+     * @return the {@link Predicate}
+     */
     @NotNull
     @Contract(pure = true)
     private static Predicate<? super InteractionCommand> isEnabledInGuild(@NotNull final Guild guild) {
@@ -111,6 +150,13 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    /**
+     * Creates a {@link Predicate} that checks whenever the command is the right visibility according to {@link InteractionCommand#getVisibility()}.
+     *
+     * @param visibility the {@link InteractionCommandVisibility} to check on
+     *
+     * @return the {@link Predicate}
+     */
     @NotNull
     @Contract(pure = true)
     private static Predicate<? super InteractionCommand> isVisibility(@NotNull final InteractionCommandVisibility visibility) {
@@ -119,17 +165,39 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
-
+    /**
+     * Filters and maps the given {@link Stream} of {@link InteractionCommand} into {@link T}, which gets converted into a {@link Map}
+     * where the key is the {@link InteractionCommand#getName()}, and the value is the {@link InteractionCommand}.
+     *
+     * @param clazz the {@link Class} to cast to
+     * @param commands the {@link Stream} to filter and map
+     * @param <T> the {@link InteractionCommand} type, like {@link SlashCommand} and {@link UserContextCommand}
+     *
+     * @return a {@link Map} of {@link InteractionCommand#getName()} and {@link T}
+     */
     private static <T extends InteractionCommand> Map<String, T> filterCommandsToMap(final @NotNull Class<? extends T> clazz, @NotNull final Stream<? super T> commands) {
         return streamToMap(commands
                 .filter(clazz::isInstance)
                 .map(clazz::cast));
     }
 
+    /**
+     * Collects the Stream of {@link InteractionCommand} into a Map where the key is {@link InteractionCommand#getName()} and the value is {@link T}.
+     *
+     * @param commands the {@link Stream} to collect
+     * @param <T> the {@link InteractionCommand} type, like {@link SlashCommand} and {@link UserContextCommand}
+     *
+     * @return a {@link Map} of {@link InteractionCommand#getName()} and {@link T}
+     */
     private static <T extends InteractionCommand> Map<String, T> streamToMap(@NotNull final Stream<? extends T> commands) {
         return commands.collect(Collectors.toMap(InteractionCommand::getName, Function.identity()));
     }
 
+    /**
+     * Forwards the given {@link SelectMenu} to the correct command, if the {@link SelectMenu} is expired the {@link SelectMenu} will get disabled.
+     *
+     * @param event the {@link SelectMenuInteractionEvent} to forward
+     */
     @Override
     public void onSelectMenuInteraction(@NotNull final SelectMenuInteractionEvent event) {
         pool.execute(() -> {
@@ -149,6 +217,11 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    /**
+     * Forwards the given {@link Button} to the correct command, if the {@link Button} is expired the {@link Button} will get disabled.
+     *
+     * @param event the {@link ButtonInteractionEvent} to forward
+     */
     @Override
     public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
         pool.execute(() -> {
@@ -168,6 +241,11 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    /**
+     * Forwards the given {@link Modal} to the correct command.
+     *
+     * @param event the {@link ModalInteractionEvent} to forward
+     */
     @Override
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
         pool.execute(() -> {
@@ -184,6 +262,11 @@ public class CommandHandler extends ListenerAdapter {
     }
 
 
+    /**
+     * Checks the message's components, and disables them when they are expired.
+     *
+     * @param event the {@link ComponentInteraction} to reply to
+     */
     private void expireComponentsMessage(@NotNull final ComponentInteraction event) {
         List<ActionRow> components = event.getMessage().getActionRows()
                 .stream()
@@ -196,6 +279,13 @@ public class CommandHandler extends ListenerAdapter {
         event.editComponents(components).queue();
     }
 
+    /**
+     * Disables the component if it's expired.
+     *
+     * @param component the {@link ItemComponent} to check
+     *
+     * @return itself, or itself as disabled
+     */
     private ItemComponent disableComponentWhenExpired(@NotNull final ItemComponent component) {
 
         if (!(component instanceof ActionComponent actionComponent)) {
@@ -224,6 +314,11 @@ public class CommandHandler extends ListenerAdapter {
     }
 
 
+    /**
+     * Forwards the given {@link SlashCommandInteractionEvent} to the correct command.
+     *
+     * @param event the {@link SlashCommandInteractionEvent} to forward
+     */
     @Override
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
         pool.execute(() -> {
@@ -235,6 +330,11 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    /**
+     * Forwards the given {@link CommandAutoCompleteInteractionEvent} to the correct command.
+     *
+     * @param event the {@link CommandAutoCompleteInteractionEvent} to forward
+     */
     @Override
     public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
         pool.execute(() -> {
@@ -244,6 +344,12 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+
+    /**
+     * Forwards the given {@link UserContextInteractionEvent} to the correct command.
+     *
+     * @param event the {@link UserContextInteractionEvent} to forward
+     */
     @Override
     public void onUserContextInteraction(@NotNull final UserContextInteractionEvent event) {
         pool.execute(() -> {
@@ -255,6 +361,11 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
+    /**
+     * Forwards the given {@link MessageContextInteractionEvent} to the correct command.
+     *
+     * @param event the {@link MessageContextInteractionEvent} to forward
+     */
     @Override
     public void onMessageContextInteraction(@NotNull final MessageContextInteractionEvent event) {
         pool.execute(() -> {
@@ -272,7 +383,17 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
-
+    /**
+     * Checks whenever the command exists, whenever the user and the bot have the right permission, and possibly more in the future.
+     *
+     * @param nameToCommand the {@link Map} which maps the {@link InteractionCommand#getName()} to the {@link InteractionCommand}
+     * @param event the {@link CommandInteraction} to reply to on failure
+     *
+     * @return whenever the command should/can be run
+     *
+     * @see InteractionCommand#getRequiredUserPermission()
+     * @see InteractionCommand#getRequiredBotPermission()
+     */
     private static boolean checkCanRunGeneralCommand(@NotNull final Map<String, ? extends InteractionCommand> nameToCommand,
                                                      @NotNull final CommandInteraction event) {
 
@@ -292,11 +413,27 @@ public class CommandHandler extends ListenerAdapter {
         };
     }
 
+    /**
+     * Whenever the global command can be run.
+     *
+     * @param event the {@link CommandInteraction} to reply to on failure
+     * @param command the relating {@link InteractionCommand}
+     *
+     * @return whenever the command can be run
+     */
+    @Contract(pure = true)
     private static boolean checkCanRunGlobalCommand(@NotNull final CommandInteraction event, @NotNull final InteractionCommand command) {
         return true;
     }
 
-
+    /**
+     * Whenever the guild command can be run.
+     *
+     * @param event the {@link IReplyCallback} to reply to on failure
+     * @param command the relating {@link InteractionCommand}
+     *
+     * @return whenever the command can be run
+     */
     @Contract()
     private static boolean checkCanRunGuildOnlyCommand(@NotNull final IReplyCallback event, @NotNull final InteractionCommand command) {
         Collection<Permission> requiredUserPermission = command.getRequiredUserPermission();
@@ -319,6 +456,16 @@ public class CommandHandler extends ListenerAdapter {
     }
 
 
+    /**
+     * Whenever the user has the required permissions.
+     *
+     * @param event the {@link IReplyCallback} to reply to on failure
+     * @param permissions the user's permissions in a {@link Collection} of {@link Permission Permissions}
+     * @param requiredPermissions the required permissions in a {@link Collection} of {@link Permission Permissions}
+     * @param user the user, examples are "You are" and "The bot is"
+     *
+     * @return whenever the user has the required permissions
+     */
     private static boolean checkMissingPermissions(@NotNull final IReplyCallback event, @NotNull final Collection<Permission> permissions, @NotNull final Collection<Permission> requiredPermissions, String user) {
         Collection<Permission> mutableMissingPermissions = new ArrayList<>(permissions);
         mutableMissingPermissions.removeAll(requiredPermissions);
@@ -331,6 +478,15 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
+    /**
+     * Generates the embed for when the user is lacking permissions.
+     *
+     * @param member the {@link Member}
+     * @param missingPermissions the {@link Collection} of {@link Permission Permissions} they are missing
+     * @param user the user, examples are "You are" and "The bot is"
+     *
+     * @return the {@link MessageEmbed} that got generated
+     */
     @NotNull
     private static MessageEmbed generateLackingPermissionEmbed(@NotNull final Member member, @NotNull final Collection<Permission> missingPermissions,
                                                                @NotNull @NonNls final String user) {
@@ -349,6 +505,14 @@ public class CommandHandler extends ListenerAdapter {
     }
 
 
+    /**
+     * Whenever the private command can be run.
+     *
+     * @param event the {@link IReplyCallback} to reply to on failure
+     * @param command the relating {@link InteractionCommand}
+     *
+     * @return whenever the command can be run
+     */
     private static boolean checkCanRunPrivateCommand(@NotNull final IReplyCallback event, @NotNull final InteractionCommand command) {
         return checkCanRunGuildOnlyCommand(event, command);
     }
