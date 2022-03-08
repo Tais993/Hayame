@@ -467,8 +467,8 @@ public class CommandHandler extends ListenerAdapter {
      * @return whenever the user has the required permissions
      */
     private static boolean checkMissingPermissions(@NotNull final IReplyCallback event, @NotNull final Collection<Permission> permissions, @NotNull final Collection<Permission> requiredPermissions, String user) {
-        Collection<Permission> mutableMissingPermissions = new ArrayList<>(permissions);
-        mutableMissingPermissions.removeAll(requiredPermissions);
+        Collection<Permission> mutableMissingPermissions = new ArrayList<>(requiredPermissions);
+        mutableMissingPermissions.removeAll(permissions);
 
         if (mutableMissingPermissions.isEmpty()) {
             return false;
