@@ -16,6 +16,7 @@ public class Config {
 
     private final String discordToken;
     private final int prometheusPort;
+    private final String grafanaPort;
     private final String databasePort;
     private final String databaseUsername;
     private final String databasePassword;
@@ -33,12 +34,14 @@ public class Config {
     @Contract(pure = true)
     public Config(@JsonProperty("discord_token") String discordToken,
                   @JsonProperty("prometheus_port") String prometheusPort,
+                  @JsonProperty("grafana_port") String grafanaPort,
                   @JsonProperty("database_port") String databasePort,
                   @JsonProperty("database_username") String databaseUsername,
                   @JsonProperty("database_password") String databasePassword) {
 
         this.discordToken = discordToken;
         this.prometheusPort = Integer.parseInt(prometheusPort);
+        this.grafanaPort = grafanaPort;
         this.databasePort = databasePort;
         this.databaseUsername = databaseUsername;
         this.databasePassword = databasePassword;
@@ -58,6 +61,14 @@ public class Config {
      */
     public int getPrometheusPort() {
         return prometheusPort;
+    }
+
+    /**
+     * The port of Grafana
+     * @return the port of Grafana
+     */
+    public String getGrafanaPort() {
+        return grafanaPort;
     }
 
     /**
