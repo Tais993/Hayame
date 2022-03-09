@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -54,7 +54,11 @@ import java.util.stream.Stream;
  * All commands have to be added to {@link ListenersList}, otherwise they will be ignored.
  */
 public class CommandHandler extends ListenerAdapter {
-    private final ForkJoinPool pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors() * 2);
+
+    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(1,
+            Runtime.getRuntime().availableProcessors(),
+            1, TimeUnit.MINUTES,
+            new ArrayBlockingQueue<>(64));
 
     private final ComponentDatabase componentDatabase;
 
@@ -209,7 +213,7 @@ public class CommandHandler extends ListenerAdapter {
      */
     @Override
     public void onSelectMenuInteraction(@NotNull final SelectMenuInteractionEvent event) {
-        pool.execute(() -> {
+        executor.execute(() -> {
             String id = event.getId();
 
             ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
@@ -236,7 +240,7 @@ public class CommandHandler extends ListenerAdapter {
      */
     @Override
     public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
-        pool.execute(() -> {
+        executor.execute(() -> {
             String id = event.getId();
 
             ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
@@ -265,7 +269,7 @@ public class CommandHandler extends ListenerAdapter {
      */
     @Override
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
-        pool.execute(() -> {
+        executor.execute(() -> {
             String id = event.getId();
 
             ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
@@ -343,7 +347,7 @@ public class CommandHandler extends ListenerAdapter {
      */
     @Override
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
-        pool.execute(() -> {
+        executor.execute(() -> {
             if (checkCanRunGeneralCommand(nameToSlashCommandCommand, event)) {
                 SlashCommand command = nameToSlashCommandCommand.get(event.getName());
 
@@ -369,7 +373,7 @@ public class CommandHandler extends ListenerAdapter {
      */
     @Override
     public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
-        pool.execute(() -> {
+        executor.execute(() -> {
             SlashCommand command = nameToSlashCommandCommand.get(event.getName());
 
             if (null == command) {
@@ -390,7 +394,7 @@ public class CommandHandler extends ListenerAdapter {
      */
     @Override
     public void onUserContextInteraction(@NotNull final UserContextInteractionEvent event) {
-        pool.execute(() -> {
+        executor.execute(() -> {
             if (checkCanRunGeneralCommand(nameToUserContextCommand, event)) {
                 UserContextCommand command = nameToUserContextCommand.get(event.getName());
 
@@ -408,7 +412,7 @@ public class CommandHandler extends ListenerAdapter {
      */
     @Override
     public void onMessageContextInteraction(@NotNull final MessageContextInteractionEvent event) {
-        pool.execute(() -> {
+        executor.execute(() -> {
             if (checkCanRunGeneralCommand(nameToMessageContextCommand, event)) {
                 MessageContextCommand command = nameToMessageContextCommand.get(event.getName());
 
@@ -559,14 +563,13 @@ public class CommandHandler extends ListenerAdapter {
     private static boolean checkCanRunPrivateCommand(@NotNull final IReplyCallback event, @NotNull final InteractionCommand command) {
         return checkCanRunGuildOnlyCommand(event, command);
     }
-
-
+    
     /**
-     * The {@link ForkJoinPool} used by the commandhandler.
+     * The {@link ThreadPoolExecutor} that is being used by the command handler
      *
-     * @return the pool
+     * @return the {@link ThreadPoolExecutor}
      */
-    public ForkJoinPool getPool() {
-        return pool;
+    public ThreadPoolExecutor getExecutor() {
+        return executor;
     }
 }

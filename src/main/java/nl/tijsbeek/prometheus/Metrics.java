@@ -64,15 +64,21 @@ public class Metrics {
             .register();
 
 
-    public static final Gauge BUSY_THREADS = Gauge.build()
-            .name("busy_threads")
-            .help("Busy threads")
+    public static final Gauge TOTAL_COMMAND_THREADS = Gauge.build()
+            .name("total_command_threads")
+            .help("Total command threads")
             .subsystem("bot")
             .register();
 
-    public static final Gauge TOTAL_THREADS = Gauge.build()
-            .name("total_threads")
-            .help("Total threads")
+    public static final Gauge RUNNING_COMMAND_THREADS = Gauge.build()
+            .name("running_command_threads")
+            .help("Running command threads")
+            .subsystem("bot")
+            .register();
+
+    public static final Gauge IDLE_COMMAND_THREADS = Gauge.build()
+            .name("idle_command_threads")
+            .help("Idle command threads")
             .subsystem("bot")
             .register();
 }

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class MetricsHandler implements EventListener {
@@ -31,9 +32,11 @@ public class MetricsHandler implements EventListener {
         }
 
         scheduledExecutor.schedule(() -> {
-            Metrics.BUSY_THREADS.set(commandHandler.getPool().getActiveThreadCount());
-            Metrics.TOTAL_THREADS.set(commandHandler.getPool().getPoolSize());
-        }, 15, TimeUnit.SECONDS);
+            ThreadPoolExecutor executor = commandHandler.getExecutor();
+            Metrics.RUNNING_COMMAND_THREADS.set(executor.getActiveCount());
+            Metrics.TOTAL_COMMAND_THREADS.set(executor.getMaximumPoolSize());
+            Metrics.IDLE_COMMAND_THREADS.set(executor.getCorePoolSize() - executor.getActiveCount());
+        }, 5, TimeUnit.SECONDS);
     }
 
     @Override
