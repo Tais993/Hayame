@@ -1,7 +1,5 @@
 package nl.tijsbeek.discord.system;
 
-import io.prometheus.client.Counter;
-import io.prometheus.client.Histogram;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -31,6 +29,7 @@ import nl.tijsbeek.discord.commands.*;
 import nl.tijsbeek.discord.components.ComponentDatabase;
 import nl.tijsbeek.discord.components.ComponentEntity;
 import nl.tijsbeek.prometheus.Metrics;
+import nl.tijsbeek.prometheus.MetricsHandler;
 import nl.tijsbeek.utils.EmbedUtils;
 import nl.tijsbeek.utils.StreamUtils;
 import org.jetbrains.annotations.Contract;
@@ -351,19 +350,11 @@ public class CommandHandler extends ListenerAdapter {
             if (checkCanRunGeneralCommand(nameToSlashCommandCommand, event)) {
                 SlashCommand command = nameToSlashCommandCommand.get(event.getName());
 
-                invocationDurationHistogramByCommand(command).time(() -> {
+                MetricsHandler.runInvocationCommandTimer(event,() -> {
                     command.onSlashCommandInteraction(event);
                 });
             }
         });
-    }
-
-    private static Counter.Child commandsCounterByCommand(@NotNull final InteractionCommand command) {
-        return Metrics.GENERIC_COMMANDS.labels(command.getType().name(), command.getVisibility().name(), command.getName());
-    }
-
-    private static Histogram.Child invocationDurationHistogramByCommand(@NotNull final InteractionCommand command) {
-        return Metrics.GENERIC_COMMAND_INVOCATION_DURATION.labels(command.getType().name(), command.getVisibility().name(), command.getName());
     }
 
     /**
@@ -380,7 +371,9 @@ public class CommandHandler extends ListenerAdapter {
                 throw new IllegalStateException("Autocomplete, with the command %s wasn't found! Something went extremely wrong.".formatted(event.getName()));
             }
 
-            Metrics.GENERIC_COMMAND_INVOCATION_DURATION.time(() -> {
+
+            Metrics.Commands.AUTOCOMPLETES.labels(event.getName(), event.getFocusedOption().getName());
+            Metrics.Commands.AUTOCOMPLETE_INVOCATION_DURATION.labels(event.getName(), event.getFocusedOption().getName()).time(() -> {
                 command.onCommandAutoCompleteInteractionEvent(event);
             });
         });
@@ -398,7 +391,7 @@ public class CommandHandler extends ListenerAdapter {
             if (checkCanRunGeneralCommand(nameToUserContextCommand, event)) {
                 UserContextCommand command = nameToUserContextCommand.get(event.getName());
 
-                Metrics.GENERIC_COMMAND_INVOCATION_DURATION.time(() -> {
+                MetricsHandler.runInvocationCommandTimer(event,() -> {
                     command.onUserContextInteraction(event);
                 });
             }
@@ -416,7 +409,7 @@ public class CommandHandler extends ListenerAdapter {
             if (checkCanRunGeneralCommand(nameToMessageContextCommand, event)) {
                 MessageContextCommand command = nameToMessageContextCommand.get(event.getName());
 
-                Metrics.GENERIC_COMMAND_INVOCATION_DURATION.time(() -> {
+                MetricsHandler.runInvocationCommandTimer(event,() -> {
                     command.onMessageContextInteraction(event);
                 });
             }
@@ -436,8 +429,8 @@ public class CommandHandler extends ListenerAdapter {
      */
     private static boolean checkCanRunGeneralCommand(@NotNull final Map<String, ? extends InteractionCommand> nameToCommand,
                                                      @NotNull final CommandInteraction event) {
-        //noinspection resource - observeDuration closes it
-        Histogram.Timer preCommandDuration = Metrics.GENERIC_COMMAND_HANDLING_DURATION.labels(event.getCommandType().name(), event.getName()).startTimer();
+        MetricsHandler.handleCommandCounter(event);
+        MetricsHandler.HistogramTimerDouble timer = MetricsHandler.getHandlingCommandTimer(event);
 
         String commandName = event.getName();
 
@@ -448,15 +441,13 @@ public class CommandHandler extends ListenerAdapter {
             throw new IllegalStateException("%s with the name %s wasn't found! Something went extremely wrong.".formatted(event.getCommandType(), commandName));
         }
 
-        Metrics.GENERIC_COMMANDS.labels(command.getType().name(), command.getVisibility().name(), command.getName()).inc();
-
         boolean canRun = switch (command.getVisibility()) {
             case GLOBAL -> checkCanRunGlobalCommand(event, command);
             case GUILD_ONLY -> checkCanRunGuildOnlyCommand(event, command);
             case PRIVATE -> checkCanRunPrivateCommand(event, command);
         };
 
-        preCommandDuration.observeDuration();
+        timer.observe();
         return canRun;
     }
 
@@ -563,7 +554,7 @@ public class CommandHandler extends ListenerAdapter {
     private static boolean checkCanRunPrivateCommand(@NotNull final IReplyCallback event, @NotNull final InteractionCommand command) {
         return checkCanRunGuildOnlyCommand(event, command);
     }
-    
+
     /**
      * The {@link ThreadPoolExecutor} that is being used by the command handler
      *
