@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import nl.tijsbeek.discord.commands.*;
 import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
 import nl.tijsbeek.discord.components.ComponentDatabase;
@@ -295,6 +296,10 @@ public class CommandHandler extends ListenerAdapter {
             InteractionCommand command = commandByNameAndType(componentEntity);
 
             componentDatabase.remove(id);
+            event.getValues().stream()
+                    .map(ModalMapping::getId)
+                    .forEach(componentDatabase::remove);
+
 
             if (command != null) {
                 Metrics.GENERIC_MODAL_INVOCATION_DURATION.labels(effectiveListenerId).time(() -> {
