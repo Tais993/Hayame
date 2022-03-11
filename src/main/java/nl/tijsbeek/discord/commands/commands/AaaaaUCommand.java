@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AaaaaUCommand extends AbstractInteractionCommand implements UserContextCommand {
     public AaaaaUCommand() {
-        super(Commands.user("grrrrra"), InteractionCommandVisibility.GUILD_ONLY, InteractionCommandState.ENABLED);
+        super(Commands.user("aaaaa"), InteractionCommandVisibility.GUILD_ONLY, InteractionCommandState.ENABLED);
 
     }
 

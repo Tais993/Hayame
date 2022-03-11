@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AaaaaMCommand extends AbstractInteractionCommand implements MessageContextCommand {
     public AaaaaMCommand() {
-        super(Commands.message("grrrrraaa"), InteractionCommandVisibility.GUILD_ONLY, InteractionCommandState.ENABLED);
+        super(Commands.message("aaaaa"), InteractionCommandVisibility.GUILD_ONLY, InteractionCommandState.ENABLED);
 
     }
 
