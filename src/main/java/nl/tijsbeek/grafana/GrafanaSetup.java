@@ -20,15 +20,51 @@ public final class GrafanaSetup {
     public static final String SLASHCOMMAND_TEMPLATE_NAME = "slashcommand_name";
     public static final String USER_CONTEXTCOMMAND_TEMPLATE_NAME = "user_contextcommand_name";
     public static final String MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME = "message_contextcommand_name";
+
+    private static final String dataSourceUid = "discord-bot-prometheus";
+
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final Config config;
 
     // eyJrIjoiWTBHTDE4b2phc1Nma3E3U3BncnF3Yjk0YWlxb2VQZUMiLCJuIjoiYSIsImlkIjoxfQ==
 
-    public GrafanaSetup(CommandHandler commandHandler, @NotNull final Config config) throws IOException, InterruptedException {
+    public GrafanaSetup(@NotNull final CommandHandler commandHandler, @NotNull final Config config) throws IOException, InterruptedException {
+        this.config = config;
 
-        String rowsSlash = generateRows("slashcommands", SLASHCOMMAND_TEMPLATE_NAME, "slash") + ",";
-        String rowsUser = generateRows("user_contextcommands", USER_CONTEXTCOMMAND_TEMPLATE_NAME, "user context")  + ",";
-        String rowsMessage = generateRows("message_contextcommands", MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME, "message context");
+        generateDatasource();
+        generateDashboard(commandHandler);
+    }
+
+    private HttpRequest.Builder generateRequest(String apiUrl) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + config.getGrafanaPort() + apiUrl))
+                .setHeader("Content-Type", "application/json")
+                .setHeader("Authorization", "Bearer " + config.getGrafanaKey());
+    }
+
+
+    private void generateDatasource() throws IOException, InterruptedException {
+        String dataSource = getResourceAsString("datasource.json");
+
+        dataSource = dataSource.replace("{{DATA-SOURCE-NAME}}", dataSourceUid);
+        dataSource = dataSource.replace("{{PROMETHEUS-PORT}}", config.getPrometheusPort());
+
+        HttpRequest request = generateRequest("/api/datasources")
+                .POST(HttpRequest.BodyPublishers.ofString(dataSource))
+                .build();
+
+        System.out.println(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+                .body());
+    }
+
+
+    private void generateDashboard(@NotNull final CommandHandler commandHandler) throws IOException, InterruptedException {
+
+        String rowsSlash = generateRows("slashcommands", SLASHCOMMAND_TEMPLATE_NAME, "slash", dataSourceUid) + ",";
+        String rowsUser = generateRows("user_contextcommands", USER_CONTEXTCOMMAND_TEMPLATE_NAME, "user context", dataSourceUid)  + ",";
+        String rowsMessage = generateRows("message_contextcommands", MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME, "message context", dataSourceUid);
 
         String templateSlash = generateTemplate(commandHandler.getSlashCommandCommand(), SLASHCOMMAND_TEMPLATE_NAME) + ",";
         String templateUser = generateTemplate(commandHandler.getUserContextCommand(), USER_CONTEXTCOMMAND_TEMPLATE_NAME) + ",";
@@ -36,14 +72,7 @@ public final class GrafanaSetup {
 
         String fullJson = formatFullJson(rowsSlash + rowsUser + rowsMessage, templateSlash + templateUser + templateMessage);
 
-        System.out.println(fullJson);
-
-        HttpClient httpClient = HttpClient.newHttpClient();
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + config.getGrafanaPort() + "/api/dashboards/db"))
-                .setHeader("Content-Type", "application/json")
-                .setHeader("Authorization", "Bearer " + config.getGrafanaKey())
+        HttpRequest request = generateRequest("/api/dashboards/db")
                 .POST(HttpRequest.BodyPublishers.ofString(fullJson))
                 .build();
 
@@ -65,12 +94,13 @@ public final class GrafanaSetup {
     }
 
 
-    private String generateRows(CharSequence metricCommandType, CharSequence commandTemplateName, CharSequence commandType) throws IOException {
+    private String generateRows(CharSequence metricCommandType, CharSequence commandTemplateName, CharSequence commandType, @NotNull String dataSourceUid) throws IOException {
         String commandTypeRow = getResourceAsString("command-type-row.json");
 
         commandTypeRow = commandTypeRow.replace("{{METRIC-COMMAND-TYPE}}", metricCommandType);
         commandTypeRow = commandTypeRow.replace("{{COMMAND-NAME-TEMPLATE}}", "$" + commandTemplateName);
         commandTypeRow = commandTypeRow.replace("{{COMMAND-TYPE}}", commandType);
+        commandTypeRow = commandTypeRow.replace("{{DATA-SOURCE-NAME}}", dataSourceUid);
 
         return commandTypeRow;
     }
