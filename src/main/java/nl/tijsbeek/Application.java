@@ -1,6 +1,8 @@
 package nl.tijsbeek;
 
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import nl.tijsbeek.config.Config;
 import nl.tijsbeek.discord.components.ComponentDatabase;
 import nl.tijsbeek.discord.system.CommandHandler;
@@ -51,12 +53,12 @@ public final class Application {
 
         MetricsHandler matricsHandler = new MetricsHandler(commandHandler, config);
 
-//        JDABuilder.create(config.getDiscordToken(), eventHandler.getGatewayIntents())
-//                .enableIntents(GatewayIntent.GUILD_MEMBERS)
-//                .enableCache(eventHandler.getCacheFlags())
-//                .setMemberCachePolicy(MemberCachePolicy.NONE)
-//                .addEventListeners(commandHandler, eventHandler, matricsHandler)
-//                .build();
+        JDABuilder.create(config.getDiscordToken(), eventHandler.getGatewayIntents())
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableCache(eventHandler.getCacheFlags())
+                .setMemberCachePolicy(MemberCachePolicy.NONE)
+                .addEventListeners(commandHandler, eventHandler, matricsHandler)
+                .build();
 
 
         try {
