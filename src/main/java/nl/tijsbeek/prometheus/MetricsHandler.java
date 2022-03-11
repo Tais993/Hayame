@@ -3,12 +3,11 @@ package nl.tijsbeek.prometheus;
 import io.prometheus.client.Histogram;
 import io.prometheus.client.exporter.HTTPServer;
 import io.prometheus.client.hotspot.DefaultExports;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.guild.GuildAvailableEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.GuildUnavailableEvent;
+import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.interactions.commands.CommandInteractionPayload;
 import nl.tijsbeek.config.Config;
@@ -24,6 +23,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class MetricsHandler implements EventListener {
+    private JDA jda;
     private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
     public MetricsHandler(@NotNull final CommandHandler commandHandler, @NotNull final Config config) {
@@ -45,11 +45,26 @@ public class MetricsHandler implements EventListener {
 
     @Override
     public void onEvent(@NotNull GenericEvent event) {
+        if (jda == null) {
+            jda = event.getJDA();
+        }
+
+        if (event instanceof ReadyEvent) {
+            scheduledExecutor.schedule(() -> {
+                int totalUserCount = jda.getGuildCache().stream()
+                        .mapToInt(Guild::getMemberCount)
+                        .sum();
+
+                Metrics.USER_COUNT.set(totalUserCount);
+            }, 60, TimeUnit.SECONDS);
+        }
+
         //noinspection OverlyComplexBooleanExpression
         if (event instanceof GuildJoinEvent ||
                 event instanceof GuildLeaveEvent ||
                 event instanceof GuildAvailableEvent ||
                 event instanceof GuildUnavailableEvent ||
+                event instanceof GuildReadyEvent ||
                 event instanceof ReadyEvent) {
 
             Metrics.GUILD_COUNT.set(event.getJDA().getGuildCache().size());
@@ -60,15 +75,15 @@ public class MetricsHandler implements EventListener {
         switch (event.getCommandType()) {
             case USER -> {
                 Metrics.Commands.GENERIC_COMMANDS.labels("user").inc();
-                Metrics.Commands.USER_CONTEXTCOMMANDS.labels(event.getName());
+                Metrics.Commands.USER_CONTEXTCOMMANDS.labels(event.getName()).inc();
             }
             case MESSAGE -> {
-                Metrics.Commands.GENERIC_COMMANDS.labels("message");
-                Metrics.Commands.MESSAGE_CONTEXTCOMMANDS.labels(event.getName());
+                Metrics.Commands.GENERIC_COMMANDS.labels("message").inc();
+                Metrics.Commands.MESSAGE_CONTEXTCOMMANDS.labels(event.getName()).inc();
             }
             case SLASH -> {
-                Metrics.Commands.GENERIC_COMMANDS.labels("slash");
-                Metrics.Commands.SLASHCOMMANDS.labels(event.getName());
+                Metrics.Commands.GENERIC_COMMANDS.labels("slash").inc();
+                Metrics.Commands.SLASHCOMMANDS.labels(event.getName()).inc();
             }
         }
     }
