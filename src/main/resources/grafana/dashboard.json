@@ -109,7 +109,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_guilds",
@@ -194,7 +194,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_users",
@@ -294,7 +294,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "histogram_quantile(0.95, sum(rate(bot_commands_handling_duration_bucket{type=\"slash\"}[5m])) by (le))",
@@ -305,7 +305,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "histogram_quantile(0.95, sum(rate(bot_commands_handling_duration_bucket{type=\"user\"}[5m])) by (le))",
@@ -317,7 +317,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "histogram_quantile(0.95, sum(rate(bot_commands_handling_duration_bucket{type=\"message\"}[5m])) by (le))",
@@ -404,7 +404,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_commands_invocations_total{type=\"slash\"}",
@@ -415,7 +415,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_commands_invocations_total{type=\"user\"}",
@@ -427,7 +427,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_commands_invocations_total{type=\"message\"}",
@@ -514,7 +514,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "histogram_quantile(0.95, sum(rate(bot_commands_invocation_duration_bucket{type=\"slash\"}[5m])) by (le))",
@@ -525,7 +525,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "histogram_quantile(0.95, sum(rate(bot_commands_invocation_duration_bucket{type=\"user\"}[5m])) by (le))",
@@ -537,7 +537,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "histogram_quantile(0.95, sum(rate(bot_commands_invocation_duration_bucket{type=\"message\"}[5m])) by (le))",
@@ -638,7 +638,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "jvm_memory_bytes_used{area=\"heap\"}",
@@ -649,7 +649,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "jvm_memory_bytes_used{area=\"nonheap\"}",
@@ -735,7 +735,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_total_command_threads",
@@ -746,7 +746,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_running_command_threads",
@@ -758,7 +758,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "bot_idle_command_threads",
@@ -770,7 +770,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "jvm_threads_current",
@@ -782,7 +782,7 @@
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "9F9qoyLnz"
+                "uid": "{{DATA-SOURCE-NAME}}"
               },
               "exemplar": true,
               "expr": "jvm_threads_daemon",
