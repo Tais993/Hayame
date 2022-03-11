@@ -1,0 +1,13 @@
+{
+  "allFormat": "glob",
+  "current": {{CURRENT}},
+  "hide": 0,
+  "includeAll": false,
+  "multi": false,
+  "name": "{{COMMAND-NAME-TEMPLATE}}",
+  "options": {{OPTIONS}},
+  "query": "{{QUERY}}",
+  "queryValue": "",
+  "skipUrlSync": false,
+  "type": "custom"
+}
