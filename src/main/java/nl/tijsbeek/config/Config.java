@@ -15,7 +15,8 @@ import java.io.IOException;
 public class Config {
 
     private final String discordToken;
-    private final int prometheusPort;
+    private final int prometheusBotPort;
+    private final String prometheusPort;
     private final String grafanaPort;
     private final String grafanaKey;
     private final String databasePort;
@@ -26,7 +27,8 @@ public class Config {
      * Creates an instance
      *
      * @param discordToken the discord-token
-     * @param prometheusPort the port to run prometheus on
+     * @param prometheusBotPort the port to run the bot server for prometheus on
+     * @param prometheusPort the port prometheus runs on
      * @param databasePort the port of the DB
      * @param grafanaPort the port of Grafana
      * @param grafanaKey an API key of Grafana
@@ -36,6 +38,7 @@ public class Config {
     @JsonCreator
     @Contract(pure = true)
     public Config(@JsonProperty("discord_token") String discordToken,
+                  @JsonProperty("prometheus_bot_port") String prometheusBotPort,
                   @JsonProperty("prometheus_port") String prometheusPort,
                   @JsonProperty("grafana_port") String grafanaPort,
                   @JsonProperty("grafana_key") String grafanaKey,
@@ -44,7 +47,8 @@ public class Config {
                   @JsonProperty("database_password") String databasePassword) {
 
         this.discordToken = discordToken;
-        this.prometheusPort = Integer.parseInt(prometheusPort);
+        this.prometheusBotPort = Integer.parseInt(prometheusBotPort);
+        this.prometheusPort = prometheusPort;
         this.grafanaPort = grafanaPort;
         this.grafanaKey = grafanaKey;
         this.databasePort = databasePort;
@@ -61,10 +65,18 @@ public class Config {
     }
 
     /**
-     * the port to run prometheus on
-     * @return the port to run prometheus on
+     * the port to the bot server for prometheus on
+     * @return the port to the bot server for prometheus on
      */
-    public int getPrometheusPort() {
+    public int getPrometheusBotPort() {
+        return prometheusBotPort;
+    }
+
+    /**
+     * the port prometheus runs on
+     * @return the port prometheus runs on
+     */
+    public String getPrometheusPort() {
         return prometheusPort;
     }
 
