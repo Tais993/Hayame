@@ -33,26 +33,28 @@ public final class GrafanaSetup {
     public GrafanaSetup(@NotNull final CommandHandler commandHandler, @NotNull final Config config) throws IOException, InterruptedException {
         this.config = config;
 
-        generateDatasource();
-        generateDashboard(commandHandler);
+
+
+
+
     }
 
-    private HttpRequest.Builder generateRequest(String apiUrl) {
+    private HttpRequest.Builder generateRequest() {
         return HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + config.getGrafanaPort() + apiUrl))
+                .uri(URI.create("http://localhost:" + config.getGrafanaPort() + "/api/datasources/name/Discord bot"))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("Authorization", "Bearer " + config.getGrafanaKey());
     }
 
 
     private void generateDatasource() throws IOException, InterruptedException {
-        String dataSource = getResourceAsString("datasource.json");
+        String commandTypeRow = getResourceAsString("datasource.json");
 
-        dataSource = dataSource.replace("{{DATA-SOURCE-NAME}}", dataSourceUid);
-        dataSource = dataSource.replace("{{PROMETHEUS-PORT}}", config.getPrometheusPort());
+        commandTypeRow = commandTypeRow.replace("{{DATA-SOURCE-NAME}}", dataSourceUid);
+        commandTypeRow = commandTypeRow.replace("{{PROMETHEUS-PORT}}", config.getPrometheusPort());
 
-        HttpRequest request = generateRequest("/api/datasources")
-                .POST(HttpRequest.BodyPublishers.ofString(dataSource))
+        HttpRequest request = generateRequest()
+                .GET()
                 .build();
 
         System.out.println(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
@@ -72,7 +74,7 @@ public final class GrafanaSetup {
 
         String fullJson = formatFullJson(rowsSlash + rowsUser + rowsMessage, templateSlash + templateUser + templateMessage);
 
-        HttpRequest request = generateRequest("/api/dashboards/db")
+        HttpRequest request = generateRequest()
                 .POST(HttpRequest.BodyPublishers.ofString(fullJson))
                 .build();
 
