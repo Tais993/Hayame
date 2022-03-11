@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.InteractionCommandState;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
+import nl.tijsbeek.discord.components.ComponentDatabase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -26,6 +27,7 @@ import java.util.List;
  * Methods like {@link #addEnabledGuilds(Long...)}, {@link #addRequiredBotPermission(Permission...)} and {@link #addRequiredUserPermission(Permission...)} exist to improve the experience.
  */
 public abstract class AbstractInteractionCommand implements InteractionCommand {
+    protected ComponentDatabase componentDatabase;
 
     private final CommandData data;
     private final InteractionCommandVisibility visibility;
@@ -40,6 +42,10 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
         this.data = data;
         this.visibility = visibility;
         this.state = state;
+    }
+
+    public void setComponentDatabase(ComponentDatabase componentDatabase) {
+        this.componentDatabase = componentDatabase;
     }
 
     /**
