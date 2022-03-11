@@ -1,6 +1,10 @@
 package nl.tijsbeek.discord.system;
 
 import nl.tijsbeek.discord.commands.InteractionCommand;
+import nl.tijsbeek.discord.commands.commands.AaaaaMCommand;
+import nl.tijsbeek.discord.commands.commands.AaaaaUCommand;
+import nl.tijsbeek.discord.commands.commands.GrrrCommand;
+import nl.tijsbeek.discord.commands.commands.TestCommand;
 import nl.tijsbeek.discord.events.CustomEventListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +35,10 @@ public class ListenersList {
         List<InteractionCommand> commands = new ArrayList<>(20);
 
         // TEMPORARY PLACEHOLDER AGAINST WARNINGS
-        commands.contains(null);
+        commands.add(new TestCommand());
+        commands.add(new GrrrCommand());
+        commands.add(new AaaaaMCommand());
+        commands.add(new AaaaaUCommand());
 
 
         this.eventListeners = eventListeners;
