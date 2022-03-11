@@ -17,6 +17,7 @@ public class Config {
     private final String discordToken;
     private final int prometheusPort;
     private final String grafanaPort;
+    private final String grafanaKey;
     private final String databasePort;
     private final String databaseUsername;
     private final String databasePassword;
@@ -27,6 +28,8 @@ public class Config {
      * @param discordToken the discord-token
      * @param prometheusPort the port to run prometheus on
      * @param databasePort the port of the DB
+     * @param grafanaPort the port of Grafana
+     * @param grafanaKey an API key of Grafana
      * @param databaseUsername the username of the DB
      * @param databasePassword the password of the DB
      */
@@ -35,6 +38,7 @@ public class Config {
     public Config(@JsonProperty("discord_token") String discordToken,
                   @JsonProperty("prometheus_port") String prometheusPort,
                   @JsonProperty("grafana_port") String grafanaPort,
+                  @JsonProperty("grafana_key") String grafanaKey,
                   @JsonProperty("database_port") String databasePort,
                   @JsonProperty("database_username") String databaseUsername,
                   @JsonProperty("database_password") String databasePassword) {
@@ -42,6 +46,7 @@ public class Config {
         this.discordToken = discordToken;
         this.prometheusPort = Integer.parseInt(prometheusPort);
         this.grafanaPort = grafanaPort;
+        this.grafanaKey = grafanaKey;
         this.databasePort = databasePort;
         this.databaseUsername = databaseUsername;
         this.databasePassword = databasePassword;
@@ -69,6 +74,14 @@ public class Config {
      */
     public String getGrafanaPort() {
         return grafanaPort;
+    }
+
+    /**
+     * An API key of grafana
+     * @return an API key of Grafana
+     */
+    public String getGrafanaKey() {
+        return grafanaKey;
     }
 
     /**
