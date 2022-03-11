@@ -11,8 +11,10 @@ import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
 import nl.tijsbeek.discord.components.ComponentDatabase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -126,6 +128,34 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
 
     @Override
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
+    }
+
+    /**
+     * Generates a component/modal ID.
+     * <br/>
+     * Shortcut for {@link ComponentDatabase#createId(String, Integer, LocalDateTime, String...)}.
+     * The component doesn't expire, you can set an expiration date using {@link #generateId(LocalDateTime, String)}.
+     *
+     * @param arguments the arguments
+     * @return the ID
+     * @see #generateId(LocalDateTime, String)
+     */
+    public @Nullable String generateId(@NotNull final String arguments) {
+        return componentDatabase.createId(getName(), getType().getId(), null, arguments);
+    }
+
+    /**
+     * Generates a component/modal ID.
+     * <br/>
+     * Shortcut for {@link ComponentDatabase#createId(String, Integer, LocalDateTime, String...)}.
+     *
+     * @param expirationDate the date for the component to expire
+     * @param arguments      the arguments
+     * @return the ID
+     * @see #generateId(String)
+     */
+    public @Nullable String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String arguments) {
+        return componentDatabase.createId(getName(), getType().getId(), expirationDate, arguments);
     }
 
     @NonNls
