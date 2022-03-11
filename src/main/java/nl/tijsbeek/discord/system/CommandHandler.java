@@ -36,10 +36,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -562,5 +559,17 @@ public class CommandHandler extends ListenerAdapter {
      */
     public ThreadPoolExecutor getExecutor() {
         return executor;
+    }
+
+    public List<String> getMessageContextCommand() {
+        return new ArrayList<>(nameToMessageContextCommand.keySet());
+    }
+
+    public List<String> getSlashCommandCommand() {
+        return new ArrayList<>(nameToSlashCommandCommand.keySet());
+    }
+
+    public List<String> getUserContextCommand() {
+        return new ArrayList<>(nameToUserContextCommand.keySet());
     }
 }
