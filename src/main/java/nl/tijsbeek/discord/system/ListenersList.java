@@ -3,6 +3,7 @@ package nl.tijsbeek.discord.system;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.commands.context.message.AaaaaMCommand;
 import nl.tijsbeek.discord.commands.commands.context.user.AaaaaUCommand;
+import nl.tijsbeek.discord.commands.commands.slash.AskQuestionCommand;
 import nl.tijsbeek.discord.commands.commands.slash.GrrrCommand;
 import nl.tijsbeek.discord.commands.commands.slash.TestCommand;
 import nl.tijsbeek.discord.events.CustomEventListener;
@@ -39,6 +40,7 @@ public class ListenersList {
         commands.add(new GrrrCommand());
         commands.add(new AaaaaMCommand());
         commands.add(new AaaaaUCommand());
+        commands.add(new AskQuestionCommand());
 
 
         this.eventListeners = eventListeners;
