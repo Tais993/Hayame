@@ -64,8 +64,6 @@ public class CommandHandler extends ListenerAdapter {
             new ArrayBlockingQueue<>(64));
 
     private final ComponentDatabase componentDatabase;
-
-    private final Map<String, InteractionCommand> nameToInteractionCommand;
     private final Map<String, SlashCommand> nameToSlashCommandCommand;
     private final Map<String, UserContextCommand> nameToUserContextCommand;
     private final Map<String, MessageContextCommand> nameToMessageContextCommand;
@@ -89,7 +87,6 @@ public class CommandHandler extends ListenerAdapter {
                     }
                 }).toList();
 
-        nameToInteractionCommand = streamToMap(commands.stream());
         nameToSlashCommandCommand = filterCommandsToMap(SlashCommand.class, commands.stream());
         nameToUserContextCommand = filterCommandsToMap(UserContextCommand.class, commands.stream());
         nameToMessageContextCommand = filterCommandsToMap(MessageContextCommand.class, commands.stream());
