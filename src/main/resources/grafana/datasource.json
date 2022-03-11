@@ -2,21 +2,13 @@
   "uid": "{{DATA-SOURCE-NAME}}",
   "name": "Discord-bot",
   "type": "prometheus",
-  "typeLogoUrl": "",
   "access": "proxy",
   "url": "http://localhost:{{PROMETHEUS-PORT}}",
-  "password": "",
-  "user": "",
-  "database": "",
   "basicAuth": false,
-  "basicAuthUser": "",
-  "basicAuthPassword": "",
-  "withCredentials": false,
-  "isDefault": true,
+  "isDefault": false,
   "jsonData": {
-    "exemplarTraceIdDestinations": [],
-    "httpMethod": "POST"
+    "httpMethod": "POST",
+    "timeInterval": "5s"
   },
-  "secureJsonFields": {},
-  "readOnly": false
+  "readOnly": true
 }

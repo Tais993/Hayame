@@ -6,6 +6,8 @@ import nl.tijsbeek.config.Config;
 import nl.tijsbeek.discord.system.CommandHandler;
 import nl.tijsbeek.utils.StreamUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,9 +19,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public final class GrafanaSetup {
-    public static final String SLASHCOMMAND_TEMPLATE_NAME = "slashcommand_name";
-    public static final String USER_CONTEXTCOMMAND_TEMPLATE_NAME = "user_contextcommand_name";
-    public static final String MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME = "message_contextcommand_name";
+    private static final Logger logger = LoggerFactory.getLogger(GrafanaSetup.class);
+
+    private static final String SLASHCOMMAND_TEMPLATE_NAME = "slashcommand_name";
+    private static final String USER_CONTEXTCOMMAND_TEMPLATE_NAME = "user_contextcommand_name";
+    private static final String MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME = "message_contextcommand_name";
 
     private static final String dataSourceUid = "discord-bot-prometheus";
 
@@ -33,15 +37,13 @@ public final class GrafanaSetup {
     public GrafanaSetup(@NotNull final CommandHandler commandHandler, @NotNull final Config config) throws IOException, InterruptedException {
         this.config = config;
 
-
-
-
-
+        generateDatasource();
+        generateDashboard(commandHandler);
     }
 
-    private HttpRequest.Builder generateRequest() {
+    private HttpRequest.Builder generateRequest(String apiRoute) {
         return HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + config.getGrafanaPort() + "/api/datasources/name/Discord bot"))
+                .uri(URI.create("http://localhost:" + config.getGrafanaPort() + apiRoute))
                 .setHeader("Content-Type", "application/json")
                 .setHeader("Authorization", "Bearer " + config.getGrafanaKey());
     }
@@ -53,20 +55,20 @@ public final class GrafanaSetup {
         commandTypeRow = commandTypeRow.replace("{{DATA-SOURCE-NAME}}", dataSourceUid);
         commandTypeRow = commandTypeRow.replace("{{PROMETHEUS-PORT}}", config.getPrometheusPort());
 
-        HttpRequest request = generateRequest()
+        HttpRequest request = generateRequest("/api/datasources")
                 .GET()
                 .build();
 
-        System.out.println(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        logger.info(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
                 .body());
     }
 
 
     private void generateDashboard(@NotNull final CommandHandler commandHandler) throws IOException, InterruptedException {
 
-        String rowsSlash = generateRows("slashcommands", SLASHCOMMAND_TEMPLATE_NAME, "slash", dataSourceUid) + ",";
-        String rowsUser = generateRows("user_contextcommands", USER_CONTEXTCOMMAND_TEMPLATE_NAME, "user context", dataSourceUid)  + ",";
-        String rowsMessage = generateRows("message_contextcommands", MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME, "message context", dataSourceUid);
+        String rowsSlash = generateRows("slashcommands", SLASHCOMMAND_TEMPLATE_NAME, "slash") + ",";
+        String rowsUser = generateRows("user_contextcommands", USER_CONTEXTCOMMAND_TEMPLATE_NAME, "user context")  + ",";
+        String rowsMessage = generateRows("message_contextcommands", MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME, "message context");
 
         String templateSlash = generateTemplate(commandHandler.getSlashCommandCommand(), SLASHCOMMAND_TEMPLATE_NAME) + ",";
         String templateUser = generateTemplate(commandHandler.getUserContextCommand(), USER_CONTEXTCOMMAND_TEMPLATE_NAME) + ",";
@@ -74,11 +76,11 @@ public final class GrafanaSetup {
 
         String fullJson = formatFullJson(rowsSlash + rowsUser + rowsMessage, templateSlash + templateUser + templateMessage);
 
-        HttpRequest request = generateRequest()
+        HttpRequest request = generateRequest("/api/dashboards/db")
                 .POST(HttpRequest.BodyPublishers.ofString(fullJson))
                 .build();
 
-        System.out.println(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        logger.info(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
                 .body());
     }
 
@@ -87,6 +89,8 @@ public final class GrafanaSetup {
 
         dashboardJson = dashboardJson.replace("{{COMMAND-ROWS}}", rows);
         dashboardJson = dashboardJson.replace("{{TEMPLATE-VARIABLE}}", templateVariables);
+        dashboardJson = dashboardJson.replace("{{DATA-SOURCE-NAME}}", dataSourceUid);
+
 
         String fullJson = getResourceAsString("full-json.json");
 
@@ -96,7 +100,7 @@ public final class GrafanaSetup {
     }
 
 
-    private String generateRows(CharSequence metricCommandType, CharSequence commandTemplateName, CharSequence commandType, @NotNull String dataSourceUid) throws IOException {
+    private String generateRows(CharSequence metricCommandType, CharSequence commandTemplateName, CharSequence commandType) throws IOException {
         String commandTypeRow = getResourceAsString("command-type-row.json");
 
         commandTypeRow = commandTypeRow.replace("{{METRIC-COMMAND-TYPE}}", metricCommandType);
@@ -107,7 +111,7 @@ public final class GrafanaSetup {
         return commandTypeRow;
     }
 
-    public String generateTemplate(List<String> commandNames, CharSequence commandTemplateName) throws IOException {
+    private String generateTemplate(List<String> commandNames, CharSequence commandTemplateName) throws IOException {
         String commandTemplate = getResourceAsString("template-variable.json");
 
         commandTemplate = commandTemplate.replace("{{COMMAND-NAME-TEMPLATE}}", commandTemplateName);
