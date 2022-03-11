@@ -102,16 +102,18 @@ public final class ComponentDatabase {
      * @return the ID
      */
     @Nullable
-    public String createId(@Nullable final LocalDateTime expirationDate, @NotNull String... arguments) {
+    public String createId(@Nullable String listenerId, @Nullable Integer commandType, @Nullable final LocalDateTime expirationDate, @NotNull String... arguments) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement("""
-                     INSERT INTO discordbot.component (expire_date, arguments)
-                     VALUES (?, ?)
+                     INSERT INTO discordbot.component (listener_id, command_type, expire_date, arguments)
+                     VALUES (?, ?, ?, ?)
                      RETURNING id
                      """)) {
 
-            statement.setObject(1, expirationDate);
-            statement.setObject(2, argumentsToCsvString(arguments));
+            statement.setObject(1, listenerId);
+            statement.setObject(2, commandType);
+            statement.setObject(3, expirationDate);
+            statement.setObject(4, argumentsToCsvString(arguments));
 
             statement.execute();
 
@@ -165,17 +167,20 @@ public final class ComponentDatabase {
                      WHERE id = ?
                      """)) {
 
-            statement.setObject(1, id);
+            statement.setInt(1, Integer.parseInt(id));
 
             statement.execute();
 
             //noinspection JDBCResourceOpenedButNotSafelyClosed - it's automatically closed by the statement
             ResultSet resultSet = statement.getResultSet();
 
+            resultSet.first();
+
             String listenerId = resultSet.getObject(2, String.class);
-            LocalDateTime epireDate = resultSet.getObject(3, LocalDateTime.class);
-            List<String> arguments = csvStringToArguments(resultSet.getObject(4, String.class));
-            return new ComponentEntity(id, listenerId, epireDate, arguments);
+            int commandType = resultSet.getInt(3);
+            LocalDateTime epireDate = resultSet.getObject(4, LocalDateTime.class);
+            List<String> arguments = csvStringToArguments(resultSet.getObject(5, String.class));
+            return new ComponentEntity(id, listenerId, commandType, epireDate, arguments);
 
         } catch (SQLException e) {
             logger.error("Something went wrong while retrieving a component from the DB.", e);
