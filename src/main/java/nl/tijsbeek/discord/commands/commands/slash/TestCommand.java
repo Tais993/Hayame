@@ -1,4 +1,4 @@
-package nl.tijsbeek.discord.commands.commands;
+package nl.tijsbeek.discord.commands.commands.slash;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
