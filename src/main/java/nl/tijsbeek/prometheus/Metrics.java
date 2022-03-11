@@ -12,6 +12,12 @@ public class Metrics {
             .subsystem("bot")
             .register();
 
+    public static final Gauge USER_COUNT = Gauge.build()
+            .name("users")
+            .help("User Count")
+            .subsystem("bot")
+            .register();
+
 
     public static final class Commands {
         public static final Counter GENERIC_COMMANDS = Counter.build()
