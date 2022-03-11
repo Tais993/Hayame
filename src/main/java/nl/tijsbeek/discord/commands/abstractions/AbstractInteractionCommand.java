@@ -39,6 +39,10 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
 
     private final InteractionCommandState state;
 
+    protected AbstractInteractionCommand(@NotNull final CommandData data, @NotNull final InteractionCommandVisibility visibility) {
+        this(data, visibility, InteractionCommandState.ENABLED);
+    }
+
     protected AbstractInteractionCommand(@NotNull final CommandData data, @NotNull final InteractionCommandVisibility visibility,
                                          @NotNull final InteractionCommandState state) {
         this.data = data;

@@ -19,6 +19,10 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractSlashCommand extends AbstractInteractionCommand implements SlashCommand {
     private final SlashCommandData commandData;
 
+    protected AbstractSlashCommand(@NotNull final SlashCommandData commandData, @NotNull final InteractionCommandVisibility visibility) {
+        this(commandData, visibility, InteractionCommandState.ENABLED);
+    }
+
     protected AbstractSlashCommand(@NotNull final SlashCommandData commandData, @NotNull final InteractionCommandVisibility visibility, @NotNull final InteractionCommandState state) {
         super(commandData, visibility, state);
 
