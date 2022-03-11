@@ -82,7 +82,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "9F9qoyLnz"
+            "uid": "{{DATA-SOURCE-NAME}}"
           },
           "exemplar": true,
           "expr": "histogram_quantile(0.95, sum(rate(bot_{{METRIC-COMMAND-TYPE}}_handling_duration_bucket{command\u003d\"{{COMMAND-NAME-TEMPLATE}}\"}[5m])) by (le))",
@@ -168,7 +168,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "9F9qoyLnz"
+            "uid": "{{DATA-SOURCE-NAME}}"
           },
           "exemplar": true,
           "expr": "histogram_quantile(0.95, sum(rate(bot_{{METRIC-COMMAND-TYPE}}_invocation_duration_bucket{command\u003d\"{{COMMAND-NAME-TEMPLATE}}\"}[5m])) by (le))",
@@ -254,7 +254,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "9F9qoyLnz"
+            "uid": "{{DATA-SOURCE-NAME}}"
           },
           "exemplar": true,
           "expr": "rate(bot_{{METRIC-COMMAND-TYPE}}_invocation_duration_count{command\u003d\"{{COMMAND-NAME-TEMPLATE}}\"}[5m])",
@@ -340,7 +340,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "9F9qoyLnz"
+            "uid": "{{DATA-SOURCE-NAME}}"
           },
           "exemplar": true,
           "expr": "bot_{{METRIC-COMMAND-TYPE}}_invocations_total{command\u003d\"{{COMMAND-NAME-TEMPLATE}}\"}",
