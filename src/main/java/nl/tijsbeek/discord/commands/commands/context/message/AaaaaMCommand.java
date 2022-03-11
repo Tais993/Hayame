@@ -1,4 +1,4 @@
-package nl.tijsbeek.discord.commands.commands;
+package nl.tijsbeek.discord.commands.commands.context.message;
 
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;

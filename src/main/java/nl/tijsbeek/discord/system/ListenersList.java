@@ -1,10 +1,10 @@
 package nl.tijsbeek.discord.system;
 
 import nl.tijsbeek.discord.commands.InteractionCommand;
-import nl.tijsbeek.discord.commands.commands.AaaaaMCommand;
-import nl.tijsbeek.discord.commands.commands.AaaaaUCommand;
-import nl.tijsbeek.discord.commands.commands.GrrrCommand;
-import nl.tijsbeek.discord.commands.commands.TestCommand;
+import nl.tijsbeek.discord.commands.commands.context.message.AaaaaMCommand;
+import nl.tijsbeek.discord.commands.commands.context.user.AaaaaUCommand;
+import nl.tijsbeek.discord.commands.commands.slash.GrrrCommand;
+import nl.tijsbeek.discord.commands.commands.slash.TestCommand;
 import nl.tijsbeek.discord.events.CustomEventListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
