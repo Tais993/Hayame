@@ -294,6 +294,8 @@ public class CommandHandler extends ListenerAdapter {
 
             InteractionCommand command = commandByNameAndType(componentEntity);
 
+            componentDatabase.remove(id);
+
             if (command != null) {
                 Metrics.GENERIC_MODAL_INVOCATION_DURATION.labels(effectiveListenerId).time(() -> {
                     command.onModalInteraction(event);
