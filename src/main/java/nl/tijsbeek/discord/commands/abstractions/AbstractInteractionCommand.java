@@ -138,13 +138,13 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      * Generates a component/modal ID.
      * <br/>
      * Shortcut for {@link ComponentDatabase#createId(String, Integer, LocalDateTime, String...)}.
-     * The component doesn't expire, you can set an expiration date using {@link #generateId(LocalDateTime, String)}.
+     * The component doesn't expire, you can set an expiration date using {@link #generateId(LocalDateTime, String...)}.
      *
      * @param arguments the arguments
      * @return the ID
-     * @see #generateId(LocalDateTime, String)
+     * @see #generateId(LocalDateTime, String...)
      */
-    public @Nullable String generateId(@NotNull final String arguments) {
+    public @Nullable String generateId(@NotNull final String... arguments) {
         return componentDatabase.createId(getName(), getType().getId(), null, arguments);
     }
 
@@ -156,9 +156,9 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      * @param expirationDate the date for the component to expire
      * @param arguments      the arguments
      * @return the ID
-     * @see #generateId(String)
+     * @see #generateId(String...)
      */
-    public @Nullable String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String arguments) {
+    public @Nullable String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String... arguments) {
         return componentDatabase.createId(getName(), getType().getId(), expirationDate, arguments);
     }
 
