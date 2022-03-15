@@ -56,7 +56,7 @@ public final class GrafanaSetup {
         commandTypeRow = commandTypeRow.replace("{{PROMETHEUS-PORT}}", config.getPrometheusPort());
 
         HttpRequest request = generateRequest("/api/datasources")
-                .GET()
+                .POST(HttpRequest.BodyPublishers.ofString(commandTypeRow))
                 .build();
 
         logger.info(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
