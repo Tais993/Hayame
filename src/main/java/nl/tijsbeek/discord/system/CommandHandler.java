@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -62,7 +63,9 @@ public class CommandHandler extends ListenerAdapter {
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(1,
             Runtime.getRuntime().availableProcessors(),
             1, TimeUnit.MINUTES,
-            new ArrayBlockingQueue<>(64));
+            new ArrayBlockingQueue<>(64),
+            new CommandHandlerThreadFactory()
+    );
 
     private final ComponentDatabase componentDatabase;
     private final Map<String, SlashCommand> nameToSlashCommandCommand;
@@ -589,5 +592,21 @@ public class CommandHandler extends ListenerAdapter {
 
     public List<String> getUserContextCommand() {
         return new ArrayList<>(nameToUserContextCommand.keySet());
+    }
+
+
+    private final class CommandHandlerThreadFactory implements ThreadFactory {
+
+        @Contract(pure = true)
+        private CommandHandlerThreadFactory() {
+            super();
+        }
+
+        @NotNull
+        @Override
+        @Contract("_ -> new")
+        public Thread newThread(@NotNull final Runnable r) {
+            return new Thread(r, "CommandHandler-" + executor.getPoolSize());
+        }
     }
 }

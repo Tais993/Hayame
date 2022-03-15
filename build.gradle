@@ -18,6 +18,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'com.github.Xirado:JDA:36eea2a1c55f56ab2edfc8a5fde65921b67fc272'
 //    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.9'
+    implementation('ch.qos.logback:logback-classic:1.2.11')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
 
