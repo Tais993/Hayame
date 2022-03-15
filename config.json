@@ -1,0 +1,10 @@
+{
+  "discord_token" : "",
+  "prometheus_bot_port" : "",
+  "prometheus_port" : "9090",
+  "grafana_port" : "3000",
+  "grafana_key" : "",
+  "database_port" : "3306",
+  "database_username" : "",
+  "database_password" : ""
+}
