@@ -4,6 +4,32 @@ Yeah, here we go again!
 
 Another Discord bot, so some info about the content.
 
+== Invite the bot
+
+You want  to invite the bot? Unfortunately, it's rarely online.
+If you are interested, send me a DM, and I'll host it somewhere for you.
+But for now, it's going to be offline 80% of the time.
+
+== Tech stack
+
+=== Discord related
+- https://github.com/DV8FromTheWorld/JDA[JDA]
+- https://github.com/freyacodes/Lavalink-Client[Lavalink client]
+
+=== Database
+- https://flywaydb.org/[Flyway]
+- https://mariadb.org/[MariaDB], and https://mariadb.com/kb/en/about-mariadb-connector-j/[their Java client]
+- https://github.com/brettwooldridge/HikariCP[HikariCP]
+
+===  Statistics
+- https://prometheus.io/[Prometheus], and https://github.com/prometheus/client_java[their Java client]
+
+=== General
+- https://github.com/FasterXML/jackson[Jackson]
+- http://opencsv.sourceforge.net/[OpenCSV]
+- https://github.com/JetBrains/java-annotations[Jetbrains annotations]
+- https://logback.qos.ch/[Logback]
+
 == Set-up
 
 === Config
