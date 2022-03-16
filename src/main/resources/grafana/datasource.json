@@ -5,7 +5,7 @@
   "access": "proxy",
   "url": "http://localhost:{{PROMETHEUS-PORT}}",
   "basicAuth": false,
-  "isDefault": false,
+  "isDefault": true,
   "jsonData": {
     "httpMethod": "POST",
     "timeInterval": "5s"

@@ -59,15 +59,17 @@ public final class GrafanaSetup {
                 .POST(HttpRequest.BodyPublishers.ofString(commandTypeRow))
                 .build();
 
-        logger.info(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
-                .body());
+        String responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+
+        logger.info(responseBody);
+        logger.info(commandTypeRow);
     }
 
 
     private void generateDashboard(@NotNull final CommandHandler commandHandler) throws IOException, InterruptedException {
 
         String rowsSlash = generateRows("slashcommands", SLASHCOMMAND_TEMPLATE_NAME, "slash") + ",";
-        String rowsUser = generateRows("user_contextcommands", USER_CONTEXTCOMMAND_TEMPLATE_NAME, "user context")  + ",";
+        String rowsUser = generateRows("user_contextcommands", USER_CONTEXTCOMMAND_TEMPLATE_NAME, "user context") + ",";
         String rowsMessage = generateRows("message_contextcommands", MESSAGE_CONTEXTCOMMAND_TEMPLATE_NAME, "message context");
 
         String templateSlash = generateTemplate(commandHandler.getSlashCommandCommand(), SLASHCOMMAND_TEMPLATE_NAME) + ",";
@@ -80,8 +82,10 @@ public final class GrafanaSetup {
                 .POST(HttpRequest.BodyPublishers.ofString(fullJson))
                 .build();
 
-        logger.info(httpClient.send(request, HttpResponse.BodyHandlers.ofString())
-                .body());
+        String responseBody = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+
+        logger.info(responseBody);
+        logger.info(fullJson);
     }
 
     private String formatFullJson(String rows, String templateVariables) throws IOException {
