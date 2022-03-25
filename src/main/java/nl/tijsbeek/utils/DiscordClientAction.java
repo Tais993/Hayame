@@ -57,28 +57,48 @@ import java.util.regex.Pattern;
  */
 public final class DiscordClientAction {
 
+    public static final String DISCORD_PROTOCOL = "discord://-/";
+
+    /**
+     * Creates a DiscordClientAction based on the given URL, this might be used by maintainers for easy testing for new "URL's"
+     * If an url requires arguments, these have to be added within brackets, examples are {@code {ARGUMENT-NAME}}, {@code {GUILD-ID}} and more.
+     * See the linked examples for more
+     *
+     * @param url the url
+     *
+     * @return a DiscordClientAction based on the given URL
+     *
+     * @see General#USER
+     * @see Guild#GUILD_CHANNEL
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static DiscordClientAction ofCustomUrl(String url) {
+        return new DiscordClientAction(url);
+    }
+
     /**
      * Contains some of the more general actions
      */
     public enum General {
         ;
 
-        public static final DiscordClientAction HOME = new DiscordClientAction("discord://-/");
-        public static final DiscordClientAction FRIENDS = new DiscordClientAction("discord://-/");
+        public static final DiscordClientAction HOME = new DiscordClientAction("");
+        public static final DiscordClientAction FRIENDS = new DiscordClientAction("");
 
         public static final DiscordClientAction USER =
-                new DiscordClientAction("discord://-/users/{USER-ID}");
+                new DiscordClientAction("users/{USER-ID}");
         public static final DiscordClientAction JOIN_INVITE =
-                new DiscordClientAction("discord://-/invite/{INVITE-CODE}");
+                new DiscordClientAction("invite/{INVITE-CODE}");
         public static final DiscordClientAction HUB_MEMBERSHIP_SCREENING =
-                new DiscordClientAction("discord://-/member-verification-for-hub/{HUB-ID}");
+                new DiscordClientAction("member-verification-for-hub/{HUB-ID}");
         public static final DiscordClientAction STORE =
-                new DiscordClientAction("discord://-/store");
+                new DiscordClientAction("store");
 
         public static final DiscordClientAction HYPESQUAD =
-                new DiscordClientAction("discord://-/settings/hypesquad_online");
+                new DiscordClientAction("settings/hypesquad_online");
         public static final DiscordClientAction CHANGELOGS =
-                new DiscordClientAction("discord://-/settings/changelogs");
+                new DiscordClientAction("settings/changelogs");
     }
 
     /**
@@ -88,26 +108,26 @@ public final class DiscordClientAction {
         ;
 
         public static final DiscordClientAction GUILD =
-                new DiscordClientAction("discord://-/channels/{GUILD-ID}");
+                new DiscordClientAction("channels/{GUILD-ID}");
         public static final DiscordClientAction GUILD_CHANNEL =
-                new DiscordClientAction("discord://-/channels/{GUILD-ID}/{CHANNEL-ID}");
+                new DiscordClientAction("channels/{GUILD-ID}/{CHANNEL-ID}");
 
         public static final DiscordClientAction GUILD_DISCOVERY =
-                new DiscordClientAction("discord://-/guild-discovery");
+                new DiscordClientAction("guild-discovery");
         public static final DiscordClientAction GUILDS_CREATE =
-                new DiscordClientAction("discord://-/guilds/create");
+                new DiscordClientAction("guilds/create");
 
 
         public static final DiscordClientAction GUILD_EVENT =
-                new DiscordClientAction("discord://-/events/{GUILD-ID}/{EVENT-ID}");
+                new DiscordClientAction("events/{GUILD-ID}/{EVENT-ID}");
         public static final DiscordClientAction GUILD_MEMBERSHIP_SCREENING =
-                new DiscordClientAction("discord://-/member-verification/{GUILD-ID}");
+                new DiscordClientAction("member-verification/{GUILD-ID}");
 
         /**
          * Beta Discord feature
          */
         public static final DiscordClientAction GUILD_HOME_CHANNEL =
-                new DiscordClientAction("discord://-/channels/{GUILD-ID}/@home");
+                new DiscordClientAction("channels/{GUILD-ID}/@home");
     }
 
     /**
@@ -117,13 +137,13 @@ public final class DiscordClientAction {
         ;
 
         public static final DiscordClientAction DM_CHANNEL =
-                new DiscordClientAction("discord://-/channels/@me/{CHANNEL-ID}");
+                new DiscordClientAction("channels/@me/{CHANNEL-ID}");
         public static final DiscordClientAction DM_CHANNEL_MESSAGE =
-                new DiscordClientAction("discord://-/channels/@me/{CHANNEL-ID}/{MESSAGE-ID}");
+                new DiscordClientAction("channels/@me/{CHANNEL-ID}/{MESSAGE-ID}");
         public static final DiscordClientAction GUILD_CHANNEL =
-                new DiscordClientAction("discord://-/channels/{GUILD-ID}/{CHANNEL-ID}");
+                new DiscordClientAction("channels/{GUILD-ID}/{CHANNEL-ID}");
         public static final DiscordClientAction GUILD_CHANNEL_MESSAGE = new DiscordClientAction(
-                "discord://-/channels/{GUILD-ID}/{CHANNEL-ID}/{MESSAGE-ID}");
+                "channels/{GUILD-ID}/{CHANNEL-ID}/{MESSAGE-ID}");
     }
 
     /**
@@ -139,15 +159,15 @@ public final class DiscordClientAction {
             ;
 
             public static final DiscordClientAction ACCOUNT =
-                    new DiscordClientAction("discord://-/settings/account");
+                    new DiscordClientAction("settings/account");
             public static final DiscordClientAction PROFILE_CUSTOMIZATION =
-                    new DiscordClientAction("discord://-/settings/profile-customization");
+                    new DiscordClientAction("settings/profile-customization");
             public static final DiscordClientAction PRIVACY_AND_SAFETY =
-                    new DiscordClientAction("discord://-/settings/privacy-and-safety");
+                    new DiscordClientAction("settings/privacy-and-safety");
             public static final DiscordClientAction AUTHORIZED_APPS =
-                    new DiscordClientAction("discord://-/settings/authorized-apps");
+                    new DiscordClientAction("settings/authorized-apps");
             public static final DiscordClientAction CONNECTIONS =
-                    new DiscordClientAction("discord://-/settings/connections");
+                    new DiscordClientAction("settings/connections");
         }
 
         /**
@@ -157,13 +177,13 @@ public final class DiscordClientAction {
             ;
 
             public static final DiscordClientAction PREMIUM =
-                    new DiscordClientAction("discord://-/settings/premium");
+                    new DiscordClientAction("settings/premium");
             public static final DiscordClientAction SUBSCRIPTIONS =
-                    new DiscordClientAction("discord://-/settings/subscriptions");
+                    new DiscordClientAction("settings/subscriptions");
             public static final DiscordClientAction INVENTORY =
-                    new DiscordClientAction("discord://-/settings/inventory");
+                    new DiscordClientAction("settings/inventory");
             public static final DiscordClientAction BILLING =
-                    new DiscordClientAction("discord://-/settings/billing");
+                    new DiscordClientAction("settings/billing");
         }
 
         /**
@@ -173,36 +193,36 @@ public final class DiscordClientAction {
             ;
 
             public static final DiscordClientAction APPEARANCE =
-                    new DiscordClientAction("discord://-/settings/appearance");
+                    new DiscordClientAction("settings/appearance");
             public static final DiscordClientAction ACCESSIBILITY =
-                    new DiscordClientAction("discord://-/settings/accessibility");
+                    new DiscordClientAction("settings/accessibility");
             public static final DiscordClientAction VOICE =
-                    new DiscordClientAction("discord://-/settings/voice");
+                    new DiscordClientAction("settings/voice");
             public static final DiscordClientAction TEXT =
-                    new DiscordClientAction("discord://-/settings/text");
+                    new DiscordClientAction("settings/text");
             public static final DiscordClientAction NOTIFICATIONS =
-                    new DiscordClientAction("discord://-/settings/notifications");
+                    new DiscordClientAction("settings/notifications");
             public static final DiscordClientAction KEYBINDS =
-                    new DiscordClientAction("discord://-/settings/keybinds");
+                    new DiscordClientAction("settings/keybinds");
             public static final DiscordClientAction LOCALE =
-                    new DiscordClientAction("discord://-/settings/locale");
+                    new DiscordClientAction("settings/locale");
 
             /**
              * @see #LINUX
              */
             public static final DiscordClientAction WINDOWS =
-                    new DiscordClientAction("discord://-/settings/windows");
+                    new DiscordClientAction("settings/windows");
 
             /**
              * @see #WINDOWS
              */
             public static final DiscordClientAction LINUX =
-                    new DiscordClientAction("discord://-/settings/linux");
+                    new DiscordClientAction("settings/linux");
 
             public static final DiscordClientAction STREAMER_MODE =
-                    new DiscordClientAction("discord://-/settings/streamer-mode");
+                    new DiscordClientAction("settings/streamer-mode");
             public static final DiscordClientAction ADVANCED =
-                    new DiscordClientAction("discord://-/settings/advanced");
+                    new DiscordClientAction("settings/advanced");
         }
 
         /**
@@ -212,13 +232,13 @@ public final class DiscordClientAction {
             ;
 
             public static final DiscordClientAction ACTIVITY_STATUS =
-                    new DiscordClientAction("discord://-/settings/activity-status");
+                    new DiscordClientAction("settings/activity-status");
             public static final DiscordClientAction ACTIVITY_OVERLAY =
-                    new DiscordClientAction("discord://-/settings/overlay");
+                    new DiscordClientAction("settings/overlay");
             public static final DiscordClientAction HYPESQUAD =
-                    new DiscordClientAction("discord://-/settings/hypesquad_online");
+                    new DiscordClientAction("settings/hypesquad_online");
             public static final DiscordClientAction CHANGELOGS =
-                    new DiscordClientAction("discord://-/settings/changelogs");
+                    new DiscordClientAction("settings/changelogs");
         }
     }
 
@@ -226,15 +246,15 @@ public final class DiscordClientAction {
         ;
 
         public static final DiscordClientAction LIBRARY_GAMES =
-                new DiscordClientAction("discord://-/library");
+                new DiscordClientAction("library");
         public static final DiscordClientAction LIBRARY_SETTINGS =
-                new DiscordClientAction("discord://-/library/settings");
+                new DiscordClientAction("library/settings");
         public static final DiscordClientAction LIBRARY_ITEM_ACTION =
-                new DiscordClientAction("discord://-/library/{SKU-ID}/LAUNCH");
+                new DiscordClientAction("library/{SKU-ID}/LAUNCH");
         public static final DiscordClientAction SKU_STORE_PAGE =
-                new DiscordClientAction("discord://-/store/skus/{SKU-ID}");
+                new DiscordClientAction("store/skus/{SKU-ID}");
         public static final DiscordClientAction APPLICATION_STORE_PAGE =
-                new DiscordClientAction("discord://-/store/applications/{APPLICATION-ID}");
+                new DiscordClientAction("store/applications/{APPLICATION-ID}");
     }
 
     /**
@@ -246,7 +266,7 @@ public final class DiscordClientAction {
 
     @Contract(pure = true)
     private DiscordClientAction(final String url) {
-        this.url = url;
+        this.url = DISCORD_PROTOCOL + url;
     }
 
     /**
