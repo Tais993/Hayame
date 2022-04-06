@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The database handler for components.
@@ -101,7 +102,7 @@ public final class ComponentDatabase {
      *
      * @return the ID
      */
-    @Nullable
+    @NotNull
     public String createId(@Nullable String listenerId, @Nullable Integer commandType, @Nullable final LocalDateTime expirationDate, @NotNull String... arguments) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement("""
@@ -120,7 +121,7 @@ public final class ComponentDatabase {
             //noinspection JDBCResourceOpenedButNotSafelyClosed - it's automatically closed by the statement
             ResultSet resultSet = statement.getResultSet();
             resultSet.first();
-            return resultSet.getString(1);
+            return Objects.requireNonNull(resultSet.getString(1), "Somehow the ID returned by  the DB is null, something went exremely wrong");
         } catch (SQLException e) {
             logger.error("Something went wrong while inserting a component into the DB.", e);
             throw new RuntimeException(e);

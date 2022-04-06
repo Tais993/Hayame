@@ -144,8 +144,8 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      * @return the ID
      * @see #generateId(LocalDateTime, String...)
      */
-    public @Nullable String generateId(@NotNull final String... arguments) {
-        return componentDatabase.createId(getName(), getType().getId(), null, arguments);
+    public @NotNull String generateId(@NotNull final String... arguments) {
+        return generateId(null, arguments);
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      * @return the ID
      * @see #generateId(String...)
      */
-    public @Nullable String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String... arguments) {
+    public @NotNull String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String... arguments) {
         return componentDatabase.createId(getName(), getType().getId(), expirationDate, arguments);
     }
 
