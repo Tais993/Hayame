@@ -3,22 +3,19 @@ package nl.tijsbeek.discord.commands.abstractions;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.ActionComponent;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.InteractionCommandState;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
 import nl.tijsbeek.discord.components.ComponentDatabase;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
+import org.jetbrains.annotations.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * An abstraction of {@link InteractionCommand} with the intention to improve developer experience.
@@ -160,6 +157,59 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      */
     public @NotNull String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String... arguments) {
         return componentDatabase.createId(getName(), getType().getId(), expirationDate, arguments);
+    }
+
+    /**
+     * Get the argument of the given {@link ComponentInteraction}
+     *
+     * @param event the event to get the ID from
+     *
+     * @return an unmodifiable {@link List} with the arguments
+     *
+     * @see ComponentDatabase#retrieveComponentEntity(String)
+     */
+    public List<String> getArgumentsComponent(@NotNull final ComponentInteraction event) {
+        Objects.requireNonNull(event, "The given event cannot be null");
+
+        return getArgumentsComponent(event.getComponentId());
+    }
+
+    /**
+     * Get the argument of the given {@link ActionComponent}
+     *
+     * @param component the component to get the ID from
+     *
+     * @return an unmodifiable {@link List} with the arguments
+     *
+     * @throws IllegalArgumentException when the given Component has no ID
+     *
+     * @see ComponentDatabase#retrieveComponentEntity(String)
+     */
+    public List<String> getArgumentsComponent(@NotNull final ActionComponent component) {
+        Objects.requireNonNull(component, "The given ActionComponent cannot be null");
+
+        if (null == component.getId()) {
+            throw new IllegalArgumentException("The given component does not have an ID! All components should have an ID");
+        }
+
+        return getArgumentsComponent(component.getId());
+    }
+
+    /**
+     * Returns the arguments of the given ID.
+     *
+     * @param id the ID to retrieve the arguments from
+     *
+     * @return an unmodifiable {@link List} with the arguments
+     *
+     * @see ComponentDatabase#retrieveComponentEntity(String)
+     */
+    @NotNull
+    @Unmodifiable
+    public List<String> getArgumentsComponent(@NotNull final String id) {
+        Objects.requireNonNull(id, "The given ID cannot be null");
+
+        return componentDatabase.retrieveComponentEntity(id).getArguments();
     }
 
     @NonNls
