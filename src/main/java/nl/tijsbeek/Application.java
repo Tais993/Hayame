@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import nl.tijsbeek.config.Config;
+import nl.tijsbeek.database.Database;
 import nl.tijsbeek.discord.components.ComponentDatabase;
 import nl.tijsbeek.discord.system.CommandHandler;
 import nl.tijsbeek.discord.system.EventHandler;
@@ -36,7 +37,7 @@ public final class Application {
      * @throws IOException {@link Config#loadInstance(String)}
      */
     public static void main(@NotNull final String @NotNull [] args) throws LoginException, IOException {
-        if (args.length < 1) {
+        if (1 > args.length) {
             throw new IllegalArgumentException("Missing config location!");
         }
 
@@ -44,11 +45,11 @@ public final class Application {
 
         Config config = Config.loadInstance(configLocation);
 
-        ComponentDatabase componentHandler = new ComponentDatabase(config);
+        Database database = new Database(config);
 
         ListenersList listenersList = new ListenersList();
 
-        CommandHandler commandHandler = new CommandHandler(componentHandler, listenersList);
+        CommandHandler commandHandler = new CommandHandler(new ComponentDatabase(database.getDataSource()), listenersList);
         EventHandler eventHandler = new EventHandler(listenersList);
 
         MetricsHandler matricsHandler = new MetricsHandler(commandHandler, config);

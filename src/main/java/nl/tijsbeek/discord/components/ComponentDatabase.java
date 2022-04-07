@@ -9,10 +9,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,27 +30,12 @@ import java.util.Objects;
  */
 public final class ComponentDatabase {
     private static final Logger logger = LoggerFactory.getLogger(ComponentDatabase.class);
-    private static final String DB_SCHEMA_BOT = "discordbot";
 
     private final HikariDataSource dataSource;
 
-    public ComponentDatabase(@NotNull final Config config) {
-
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:mariadb://localhost:%s/".formatted(config.getDatabasePort()));
-        hikariConfig.setUsername(config.getDatabaseUsername());
-        hikariConfig.setPassword(config.getDatabasePassword());
-        hikariConfig.addDataSourceProperty("passwordCharacterEncoding", "UTF-8");
-        hikariConfig.setSchema(DB_SCHEMA_BOT);
-        dataSource = new HikariDataSource(hikariConfig);
-
-        Flyway flyway =
-                Flyway.configure()
-                        .schemas(DB_SCHEMA_BOT)
-                        .dataSource(dataSource)
-                        .locations("classpath:/db/").load();
-        flyway.migrate();
-
+    @Contract(pure = true)
+    public ComponentDatabase(@NotNull final HikariDataSource dataSource) {
+        this.dataSource = Objects.requireNonNull(dataSource, "Datasource cannot be null");
     }
 
     /**
@@ -187,5 +169,15 @@ public final class ComponentDatabase {
             logger.error("Something went wrong while retrieving a component from the DB.", e);
             return ComponentEntity.empty(id);
         }
+    }
+
+    @NonNls
+    @NotNull
+    @Override
+    @Contract(pure = true)
+    public String toString() {
+        return "ComponentDatabase{" +
+                "dataSource=" + dataSource +
+                '}';
     }
 }
