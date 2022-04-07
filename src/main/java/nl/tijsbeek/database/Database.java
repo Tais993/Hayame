@@ -1,13 +1,28 @@
 package nl.tijsbeek.database;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.ICSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
 import nl.tijsbeek.discord.components.ComponentDatabase;
 import org.flywaydb.core.Flyway;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class Database {
     private static final Logger logger = LoggerFactory.getLogger(Database.class);
@@ -31,6 +46,56 @@ public class Database {
                         .dataSource(dataSource)
                         .locations("classpath:/db/").load();
         flyway.migrate();
+    }
+
+    /**
+     * Writes an array of arguments to a CSV string.
+     *
+     * @param arguments an array of arguments
+     *
+     * @return the arguments as a CSV string
+     */
+    @Nullable
+    public static String argumentsToCsvString(@NotNull final String... arguments) {
+        StringWriter writer = new StringWriter();
+
+        try (ICSVWriter csvWriter = new CSVWriter(writer)) {
+            csvWriter.writeNext(arguments);
+            return writer.toString();
+        } catch (IOException e) {
+            logger.error("Something went wrong while writing component arguments to a CSV String.", e);
+            return null;
+        }
+    }
+
+    /**
+     * Writes an array of arguments to a CSV string.
+     *
+     * @param arguments an array of arguments
+     *
+     * @return the arguments as a CSV string
+     */
+    @Nullable
+    public static String argumentsToCsvString(@NotNull final Collection<String> arguments) {
+        return argumentsToCsvString(arguments.toArray(String[]::new));
+    }
+
+    /**
+     * Writes a CSV string to a {@link List} of arguments
+     *
+     * @param csv a CSV string
+     *
+     * @return the CSV String as a {@link List} of arguments
+     */
+    @NotNull
+    @Unmodifiable
+    public static List<String> csvStringToArguments(@Language("csv") @NotNull final String csv) {
+        try (CSVReader reader = new CSVReader(new StringReader(csv))) {
+            return List.of(reader.readNext());
+        } catch (IOException | CsvValidationException e) {
+            logger.error("Something went wrong while reading component arguments to a CSV String.", e);
+            return Collections.emptyList();
+        }
     }
 
     public HikariDataSource getDataSource() {

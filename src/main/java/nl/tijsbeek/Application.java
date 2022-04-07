@@ -49,7 +49,7 @@ public final class Application {
 
         ListenersList listenersList = new ListenersList();
 
-        CommandHandler commandHandler = new CommandHandler(new ComponentDatabase(database.getDataSource()), listenersList);
+        CommandHandler commandHandler = new CommandHandler(database, listenersList);
         EventHandler eventHandler = new EventHandler(listenersList);
 
         MetricsHandler matricsHandler = new MetricsHandler(commandHandler, config);

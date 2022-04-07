@@ -20,7 +20,6 @@ public class GrrrCommand extends AbstractSlashCommand {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         event.reply("grrrr")
-                .addActionRow(Button.success(componentDatabase.createId(getName(), getType().getId(), LocalDateTime.of(2022, 3, 12, 1, 1)), "a"))
                 .queue();
 
         for (int i = 0; i < 20000; i++) {

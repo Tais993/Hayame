@@ -7,6 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
+import nl.tijsbeek.database.Database;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.*;
@@ -39,44 +40,6 @@ public final class ComponentDatabase {
     }
 
     /**
-     * Writes an array of arguments to a CSV string.
-     *
-     * @param arguments an array of arguments
-     *
-     * @return the arguments as a CSV string
-     */
-    @Nullable
-    private static String argumentsToCsvString(@NotNull final String... arguments) {
-        StringWriter writer = new StringWriter();
-
-        try (ICSVWriter csvWriter = new CSVWriter(writer)) {
-            csvWriter.writeNext(arguments);
-            return writer.toString();
-        } catch (IOException e) {
-            logger.error("Something went wrong while writing component arguments to a CSV String.", e);
-            return null;
-        }
-    }
-
-    /**
-     * Writes a CSV string to a {@link List} of arguments
-     *
-     * @param csv a CSV string
-     *
-     * @return the CSV String as a {@link List} of arguments
-     */
-    @NotNull
-    @Unmodifiable
-    private static List<String> csvStringToArguments(@Language("csv") @NotNull final String csv) {
-        try (CSVReader reader = new CSVReader(new StringReader(csv))) {
-            return List.of(reader.readNext());
-        } catch (IOException | CsvValidationException e) {
-            logger.error("Something went wrong while reading component arguments to a CSV String.", e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
      * Creates an ID, and inserts it into the DB
      *
      * @param expirationDate the date for when the component should expire
@@ -96,7 +59,7 @@ public final class ComponentDatabase {
             statement.setObject(1, listenerId);
             statement.setObject(2, commandType);
             statement.setObject(3, expirationDate);
-            statement.setObject(4, argumentsToCsvString(arguments));
+            statement.setObject(4, Database.argumentsToCsvString(arguments));
 
             statement.execute();
 
@@ -162,7 +125,7 @@ public final class ComponentDatabase {
             String listenerId = resultSet.getObject(2, String.class);
             int commandType = resultSet.getInt(3);
             LocalDateTime epireDate = resultSet.getObject(4, LocalDateTime.class);
-            List<String> arguments = csvStringToArguments(resultSet.getObject(5, String.class));
+            List<String> arguments = Database.csvStringToArguments(resultSet.getObject(5, String.class));
             return new ComponentEntity(id, listenerId, commandType, epireDate, arguments);
 
         } catch (SQLException e) {
