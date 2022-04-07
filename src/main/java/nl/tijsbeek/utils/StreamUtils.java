@@ -24,7 +24,7 @@ public final class StreamUtils {
     }
 
     /**
-     * Collects the {@link Stream} of {@link String} within {@code ()} with {@code ,} as the delimiter.
+     * Collects the {@link Stream} of {@link String} with the given delimiter, without prefix & suffix.
      *
      * @param stream the {@link Stream} to collect
      * @param delimiter the delimiter

@@ -1,28 +1,19 @@
 package nl.tijsbeek.discord.components;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
-import com.opencsv.ICSVWriter;
-import com.opencsv.exceptions.CsvValidationException;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import nl.tijsbeek.config.Config;
 import nl.tijsbeek.database.Database;
-import org.flywaydb.core.Flyway;
-import org.intellij.lang.annotations.Language;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,7 +57,7 @@ public final class ComponentDatabase {
             //noinspection JDBCResourceOpenedButNotSafelyClosed - it's automatically closed by the statement
             ResultSet resultSet = statement.getResultSet();
             resultSet.first();
-            return Objects.requireNonNull(resultSet.getString(1), "Somehow the ID returned by  the DB is null, something went exremely wrong");
+            return Objects.requireNonNull(resultSet.getString(1), "Somehow the ID returned by the DB is null, something went extremely wrong");
         } catch (SQLException e) {
             logger.error("Something went wrong while inserting a component into the DB.", e);
             throw new RuntimeException(e);
@@ -124,9 +115,9 @@ public final class ComponentDatabase {
 
             String listenerId = resultSet.getObject(2, String.class);
             int commandType = resultSet.getInt(3);
-            LocalDateTime epireDate = resultSet.getObject(4, LocalDateTime.class);
+            LocalDateTime expireDate = resultSet.getObject(4, LocalDateTime.class);
             List<String> arguments = Database.csvStringToArguments(resultSet.getObject(5, String.class));
-            return new ComponentEntity(id, listenerId, commandType, epireDate, arguments);
+            return new ComponentEntity(id, listenerId, commandType, expireDate, arguments);
 
         } catch (SQLException e) {
             logger.error("Something went wrong while retrieving a component from the DB.", e);
