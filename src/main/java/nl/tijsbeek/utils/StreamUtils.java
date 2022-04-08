@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public final class StreamUtils {
 
     /**
-     * Collects the {@link Stream} of {@link String} within {@code ()} with {@code ,} as the delimiter.
+     * Collects the {@link Stream} of {@link String} within {@code ()} with {@code , } as the delimiter.
      *
      * @param stream the {@link Stream} to collect
      *
@@ -20,7 +20,7 @@ public final class StreamUtils {
      */
     @NotNull
     public static String toJoinedString(@NotNull final Stream<String> stream) {
-        return stream.collect(Collectors.joining(",", "(", ")"));
+        return stream.collect(Collectors.joining(", ", "(", ")"));
     }
 
     /**
