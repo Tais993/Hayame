@@ -26,9 +26,8 @@ public class EmbedUtils {
     @NotNull
     @Contract(pure = true)
     public static EmbedBuilder createBuilder(@NotNull final Member member) {
-        // TODO: link to profile on author press
         return new EmbedBuilder()
-                .setAuthor(member.getEffectiveName(), null, member.getEffectiveAvatarUrl())
+                .setAuthor(member.getEffectiveName(), DiscordClientAction.General.USER.formatUrl(member.getId()), member.getEffectiveAvatarUrl())
                 .setTimestamp(Instant.now());
     }
 }

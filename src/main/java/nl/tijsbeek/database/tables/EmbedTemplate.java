@@ -3,6 +3,7 @@ package nl.tijsbeek.database.tables;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.User;
+import nl.tijsbeek.utils.DiscordClientAction;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,7 +117,7 @@ public class EmbedTemplate {
 
         public EmbedTemplateBuilder setAuthor(final User author) {
             setAuthorName(author.getAsTag());
-            setAuthorUrl(author.getAvatarUrl());
+            setAuthorUrl(DiscordClientAction.General.USER.formatUrl(author.getId()));
             setAuthorIconUrl(author.getAvatarUrl());
             return this;
         }
