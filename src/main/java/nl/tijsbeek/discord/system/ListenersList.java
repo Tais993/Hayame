@@ -3,10 +3,7 @@ package nl.tijsbeek.discord.system;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.commands.context.message.AaaaaMCommand;
 import nl.tijsbeek.discord.commands.commands.context.user.AaaaaUCommand;
-import nl.tijsbeek.discord.commands.commands.slash.AskQuestionCommand;
-import nl.tijsbeek.discord.commands.commands.slash.CoinFlip;
-import nl.tijsbeek.discord.commands.commands.slash.GrrrCommand;
-import nl.tijsbeek.discord.commands.commands.slash.TestCommand;
+import nl.tijsbeek.discord.commands.commands.slash.*;
 import nl.tijsbeek.discord.events.CustomEventListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +40,7 @@ public class ListenersList {
         commands.add(new AaaaaUCommand());
         commands.add(new AskQuestionCommand());
         commands.add(new CoinFlip());
+        commands.add(new EmbedCommand());
 
 
         this.eventListeners = eventListeners;
