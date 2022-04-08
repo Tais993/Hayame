@@ -299,17 +299,16 @@ public class CommandHandler extends ListenerAdapter {
 
             InteractionCommand command = commandByNameAndType(componentEntity);
 
-            componentDatabase.remove(id);
-            event.getValues().stream()
-                    .map(ModalMapping::getId)
-                    .forEach(componentDatabase::remove);
-
-
             if (command != null) {
                 Metrics.GENERIC_MODAL_INVOCATION_DURATION.labels(effectiveListenerId).time(() -> {
                     command.onModalInteraction(event);
                 });
             }
+
+            componentDatabase.remove(id);
+            event.getValues().stream()
+                    .map(ModalMapping::getId)
+                    .forEach(componentDatabase::remove);
         });
     }
 
