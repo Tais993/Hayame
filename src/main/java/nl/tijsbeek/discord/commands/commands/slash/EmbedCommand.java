@@ -22,6 +22,7 @@ import nl.tijsbeek.database.tables.EmbedTemplate;
 import nl.tijsbeek.database.tables.EmbedTemplate.EmbedTemplateBuilder;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
 import nl.tijsbeek.discord.commands.abstractions.AbstractSlashCommand;
+import nl.tijsbeek.utils.LocaleHelper;
 import nl.tijsbeek.utils.StreamUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -34,6 +35,7 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public final class EmbedCommand extends AbstractSlashCommand {
     private static final Logger logger = LoggerFactory.getLogger(EmbedCommand.class);
@@ -46,8 +48,8 @@ public final class EmbedCommand extends AbstractSlashCommand {
     private static final String AUTHOR_ICON_URL_OPTION = "author-icon-url";
     private static final String AUTHOR_ICON_OPTION = "author-icon";
 
-    private static final String COLOR_OPTION = "color";
-    private static final String CUSTOM_COLOR_OPTION = "custom-color";
+    private static final String COLOUR_OPTION = "colour";
+    private static final String CUSTOM_COLOUR_OPTION = "custom-colour";
 
     private static final String FOOTER_URL_OPTION = "footer-url";
 
@@ -74,8 +76,8 @@ public final class EmbedCommand extends AbstractSlashCommand {
                 .addOption(OptionType.ATTACHMENT, AUTHOR_ICON_OPTION, "The author's icon (overrides author icon url)")
                 .addOption(OptionType.STRING, AUTHOR_ICON_URL_OPTION, "The author's icon url")
 
-                .addOptions(generateColorOption())
-                .addOption(OptionType.STRING, CUSTOM_COLOR_OPTION, "Hex or RGB (a.e for green, rgb; `0, 255, 0` or `-16711936`, or hex; `#00ff00`")
+                .addOptions(generateColourOption())
+                .addOption(OptionType.STRING, CUSTOM_COLOUR_OPTION, "Hex or RGB (a.e for green, rgb; `0, 255, 0` or `-16711936`, or hex; `#00ff00`")
 
                 .addOption(OptionType.STRING, FOOTER_URL_OPTION, "Footer url (the URL that will be opened once the footer text is pressed)")
 
@@ -99,8 +101,8 @@ public final class EmbedCommand extends AbstractSlashCommand {
         this.embedDatabase = new EmbedDatabase(database.getDataSource());
     }
 
-    private static @NotNull OptionData generateColorOption() {
-        return new OptionData(OptionType.STRING, COLOR_OPTION, "The name of the color, overwrites %s.".formatted(CUSTOM_COLOR_OPTION))
+    private static @NotNull OptionData generateColourOption() {
+        return new OptionData(OptionType.STRING, COLOUR_OPTION, "The name of the colour, overwrites %s.".formatted(CUSTOM_COLOUR_OPTION))
                 .addChoice("Black", Color.BLACK.getRGB() + "")
                 .addChoice("Blue", Color.BLUE.getRGB() + "")
                 .addChoice("Cyan", Color.CYAN.getRGB() + "")
@@ -118,8 +120,8 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
     @Nullable
     private static Color getEffectiveColor(@NotNull final SlashCommandInteraction interaction) {
-        OptionMapping color = interaction.getOption(COLOR_OPTION);
-        OptionMapping customColor = interaction.getOption(CUSTOM_COLOR_OPTION);
+        OptionMapping color = interaction.getOption(COLOUR_OPTION);
+        OptionMapping customColor = interaction.getOption(CUSTOM_COLOUR_OPTION);
 
         String colorString = getEffectiveStringOption(color, customColor);
 
@@ -139,17 +141,18 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
     /**
      * Parses the given string to a {@link Color}, and handles failures.
-     *
+     * <p>
      * This allows 3 syntaxes, a.e for green, rgb; `0, 255, 0` or `-16711936`, or hex; `#00ff00`"
      *
      * @param interaction the {@link IReplyCallback interaction} to reply to on failure
      * @param colorString a {@link String} of a color, following the syntax explained above
-     *
      * @return a {@link Color} or null
      */
     @Nullable
     @Contract("_, null -> null")
     private static Color stringToRgbColor(@NotNull final IReplyCallback interaction, @Nullable final String colorString) {
+        ResourceBundle locale = LocaleHelper.getSlashCommandResource(interaction.getUserLocale());
+
         if (null == colorString || colorString.isBlank()) {
             return null;
         } else if (colorString.contains(",")) {
@@ -159,7 +162,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
                     .toList();
 
             if (3 != rgbValues.size()) {
-                interaction.reply("The custom color contained more than 2 comma's!").queue();
+                interaction.reply(locale.getString("embed.error.invalid.custom-rgb")).queue();
             }
 
             return new Color(rgbValues.get(0), rgbValues.get(1), rgbValues.get(2));
@@ -167,6 +170,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
             try {
                 return Color.decode(colorString);
             } catch (final NumberFormatException e) {
+                interaction.reply(locale.getString("embed.error.invalid.hex")).queue();
                 return null;
             }
 
@@ -174,6 +178,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
             Integer rgb = toInt(colorString);
 
             if (null == rgb) {
+                interaction.reply(locale.getString("embed.error.invalid.int-rgb")).queue();
                 return null;
             }
 
@@ -185,7 +190,6 @@ public final class EmbedCommand extends AbstractSlashCommand {
      * Parses a {@link String} to {@link Integer}, this returns null when the given {@link String} isn't a valid {@link Integer}.
      *
      * @param s the {@link String} to parse
-     *
      * @return an {@link Integer} or null
      */
     private static @Nullable Integer toInt(@NotNull final String s) {
@@ -198,7 +202,11 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
     @Override
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
-        if (event.isAcknowledged()) {
+        ResourceBundle locale = LocaleHelper.getSlashCommandResource(event.getUserLocale());
+
+        Color colour = getEffectiveColor(event);
+
+        if (null == colour) {
             return;
         }
 
@@ -232,12 +240,11 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
         String footerUrl = event.getOption(FOOTER_URL_OPTION, OptionMapping::getAsString);
 
-        builder.setColor(getEffectiveColor(event))
+        builder.setColor(colour)
                 .setFooterUrl(footerUrl)
                 .setImageUrl(attachmentUrl(event.getOption(IMAGE_OPTION), event.getOption(IMAGE_URL_OPTION)))
                 .setThumbnailUrl(attachmentUrl(event.getOption(THUMBNAIL_OPTION), event.getOption(THUMBNAIL_URL_OPTION)))
                 .setMentionables(mentionables);
-
 
 
         String id = generateId();
@@ -245,9 +252,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
         embedDatabase.insertEmbedTemplate(builder.createEmbedTemplate(), id);
 
         Modal modal = Modal.create(id, "Embed content")
-                .addActionRow(TextInput.create(generateId("title"), "Title", TextInputStyle.SHORT).setRequiredRange(1, 256).setValue("Required!").build())
-                .addActionRow(TextInput.create(generateId("description"), "Description (allows markdown)", TextInputStyle.PARAGRAPH).setMaxLength(4000).build())
-                .addActionRow(TextInput.create(generateId("footer_text"), "Footer text", TextInputStyle.PARAGRAPH).setMaxLength(2048).build())
+                .addActionRow(TextInput.create(generateId("title"), locale.getString("embed.modal."), TextInputStyle.SHORT).setRequiredRange(1, 256).setValue(locale.getString("embed.modal.required")).build())
+                .addActionRow(TextInput.create(generateId("description"), locale.getString("embed.modal.description"), TextInputStyle.PARAGRAPH).setMaxLength(4000).build())
+                .addActionRow(TextInput.create(generateId("footer_text"), locale.getString("embed.modal.footer"), TextInputStyle.PARAGRAPH).setMaxLength(2048).build())
                 .build();
 
         event.replyModal(modal).queue();
@@ -258,8 +265,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
      * If the attachment is null, it returns the urlString or null.
      *
      * @param attachment nullable {@link OptionMapping} of type {@link OptionType#ATTACHMENT}
-     * @param urlString nullable {@link OptionMapping} of type {@link OptionType#STRING}
-     *
+     * @param urlString  nullable {@link OptionMapping} of type {@link OptionType#STRING}
      * @return the URL or null
      */
     @Nullable
@@ -277,6 +283,8 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
     @Override
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
+        ResourceBundle locale = LocaleHelper.getSlashCommandResource(event.getUserLocale());
+
 
         EmbedTemplate embedTemplate = embedDatabase.retrieveEmbedTemplate(event.getModalId());
 
@@ -302,6 +310,6 @@ public final class EmbedCommand extends AbstractSlashCommand {
                 .content(StreamUtils.toJoinedString(embedTemplate.getMentions().stream(), ","))
                 .queue();
 
-        event.reply("Sent the embed!").setEphemeral(true).queue();
+        event.reply(locale.getString("embed.success")).setEphemeral(true).queue();
     }
 }
