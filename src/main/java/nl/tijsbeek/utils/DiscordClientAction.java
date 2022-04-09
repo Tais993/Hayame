@@ -40,19 +40,19 @@ import java.util.regex.Pattern;
  * Example:
  *
  * <pre>
- * <code>
+ * {@code
  * event.reply("Open Discord's secret home page!")
  *      .addActionRow(DiscordClientAction.Guild.GUILD_HOME_CHANNEL.asLinkButton("Open home page!", event.getGuild().getId())
- * </code>
+ * }
  * </pre>
  *
  * To improve readability, one might want to use a static import like:
  *
  * <pre>
- * <code>
+ * {@code
  * event.reply(whoIsCommandOutput)
  *      .addActionRow(USER.asLinkButton("Open home page!", target.getId())
- * </code>
+ * }
  * </pre>
  */
 public final class DiscordClientAction {
@@ -104,6 +104,7 @@ public final class DiscordClientAction {
     /**
      * Contains guild specific actions
      */
+    @SuppressWarnings("unused")
     public enum Guild {
         ;
 
