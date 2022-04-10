@@ -3,10 +3,8 @@ package nl.tijsbeek.database.tables;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.User;
-import nl.tijsbeek.utils.DiscordClientAction;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.time.Instant;
@@ -31,6 +29,7 @@ public class EmbedTemplate {
     public EmbedTemplate(final TemporalAccessor timestamp, final String authorName, final String authorUrl,
                          final String authorIconUrl, final Color color, final String footerUrl,
                          final String imageUrl, final String thumbnailUrl, final List<String> mentions) {
+
         this.timestamp = timestamp;
         this.authorName = authorName;
         this.authorUrl = authorUrl;
@@ -117,7 +116,7 @@ public class EmbedTemplate {
 
         public EmbedTemplateBuilder setAuthor(final User author) {
             setAuthorName(author.getAsTag());
-            setAuthorUrl(DiscordClientAction.General.USER.formatUrl(author.getId()));
+            setAuthorUrl(author.getAvatarUrl());
             setAuthorIconUrl(author.getAvatarUrl());
             return this;
         }

@@ -27,7 +27,7 @@ public class EmbedDatabase {
     public void insertEmbedTemplate(@NotNull final EmbedTemplate embedTemplate, String id) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement("""
-                     INSERT INTO discordbot.embeds(id, timestamp, author_name, author_url, author_icon_url, color, footer_url, image_url, thumbnail_url, who_what_to_ping)
+                     INSERT INTO discordbot.embeds(id, timestamp, author_name, author_url, author_icon_url, colour, footer_url, image_url, thumbnail_url, who_what_to_ping)
                      VALUES (?,?,?,?,?,?,?,?,?,?)
                      """)) {
 
@@ -89,7 +89,7 @@ public class EmbedDatabase {
     }
 
     @NotNull
-    private EmbedTemplate getEmbedTemplateFromStatement(String id, PreparedStatement statement) throws SQLException {
+    private static EmbedTemplate getEmbedTemplateFromStatement(String id, PreparedStatement statement) throws SQLException {
         statement.setString(1, id);
 
         statement.execute();

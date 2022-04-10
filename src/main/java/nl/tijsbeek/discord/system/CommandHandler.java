@@ -79,8 +79,8 @@ public class CommandHandler extends ListenerAdapter {
     /**
      * Creates an instance based of {@link ListenersList#getCommands()}.
      *
-     * @param database the {@link Database}
-     * @param listenersList     the {@link ListenersList} which contains all commands
+     * @param database      the {@link Database}
+     * @param listenersList the {@link ListenersList} which contains all commands
      */
     public CommandHandler(@NotNull final Database database, @NotNull final ListenersList listenersList) {
         componentDatabase = new ComponentDatabase(database.getDataSource());

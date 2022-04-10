@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import nl.tijsbeek.config.Config;
 import nl.tijsbeek.database.Database;
-import nl.tijsbeek.discord.components.ComponentDatabase;
 import nl.tijsbeek.discord.system.CommandHandler;
 import nl.tijsbeek.discord.system.EventHandler;
 import nl.tijsbeek.discord.system.ListenersList;
@@ -36,12 +35,16 @@ public final class Application {
      * @throws LoginException {@link JDABuilder#build()}
      * @throws IOException {@link Config#loadInstance(String)}
      */
-    public static void main(@NotNull final String @NotNull [] args) throws LoginException, IOException {
-        if (1 > args.length) {
-            throw new IllegalArgumentException("Missing config location!");
+    public static void main(@NotNull final String @NotNull [] args) throws LoginException, IOException, InterruptedException {
+        String configLocation = System.getProperty("hamaye.config.location");
+
+        if (configLocation == null) {
+            configLocation = System.getenv("hamaye.config.location");
         }
 
-        String configLocation = args[0];
+        if (configLocation == null) {
+            throw new IllegalArgumentException("Missing config location! Set a system env variable (hamaye.config.location)");
+        }
 
         Config config = Config.loadInstance(configLocation);
 
@@ -60,7 +63,6 @@ public final class Application {
                 .setMemberCachePolicy(MemberCachePolicy.NONE)
                 .addEventListeners(commandHandler, eventHandler, matricsHandler)
                 .build();
-
 
         try {
             new GrafanaSetup(commandHandler, config);

@@ -27,7 +27,7 @@ public class EmbedUtils {
     @Contract(pure = true)
     public static EmbedBuilder createBuilder(@NotNull final Member member) {
         return new EmbedBuilder()
-                .setAuthor(member.getEffectiveName(), DiscordClientAction.General.USER.formatUrl(member.getId()), member.getEffectiveAvatarUrl())
+                .setAuthor(member.getEffectiveName(), member.getEffectiveAvatarUrl(), member.getEffectiveAvatarUrl())
                 .setTimestamp(Instant.now());
     }
 }
