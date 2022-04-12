@@ -252,7 +252,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
         embedDatabase.insertEmbedTemplate(builder.createEmbedTemplate(), id);
 
         Modal modal = Modal.create(id, "Embed content")
-                .addActionRow(TextInput.create(generateId("title"), locale.getString("embed.modal.title"), TextInputStyle.SHORT).setRequiredRange(1, 256).setValue(locale.getString("embed.modal.required")).build())
+                .addActionRow(TextInput.create(generateId("title"), locale.getString("embed.modal.title"), TextInputStyle.SHORT).setRequired(true).build())
                 .addActionRow(TextInput.create(generateId("description"), locale.getString("embed.modal.description"), TextInputStyle.PARAGRAPH).setMaxLength(4000).build())
                 .addActionRow(TextInput.create(generateId("footer_text"), locale.getString("embed.modal.footer"), TextInputStyle.PARAGRAPH).setMaxLength(2048).build())
                 .build();
