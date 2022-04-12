@@ -17,11 +17,11 @@ import java.util.Objects;
 public class EmbedDatabase {
     private static final Logger logger = LoggerFactory.getLogger(EmbedDatabase.class);
 
-    private final HikariDataSource dataSource;
+    private final Database database;
 
     @Contract(pure = true)
-    public EmbedDatabase(@NotNull final HikariDataSource dataSource) {
-        this.dataSource = Objects.requireNonNull(dataSource, "Datasource cannot be null");
+    public EmbedDatabase(@NotNull final Database database) {
+        this.database = Objects.requireNonNull(database, "The given database cannot be null");
     }
 
     public void insertEmbedTemplate(@NotNull final EmbedTemplate embedTemplate, String id) {

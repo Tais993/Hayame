@@ -7,7 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
-import nl.tijsbeek.discord.components.ComponentDatabase;
+import nl.tijsbeek.database.databases.EmbedDatabase;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +28,8 @@ public class Database {
     private static final String DB_SCHEMA_BOT = "discordbot";
 
     private final HikariDataSource dataSource;
+
+    private final EmbedDatabase embedDatabase;
 
     public Database(@NotNull final Config config) {
 
@@ -46,6 +47,9 @@ public class Database {
                         .dataSource(dataSource)
                         .locations("classpath:/db/").load();
         flyway.migrate();
+
+
+        embedDatabase = new EmbedDatabase(this);
     }
 
     /**
@@ -100,5 +104,10 @@ public class Database {
 
     public HikariDataSource getDataSource() {
         return dataSource;
+    }
+
+
+    public EmbedDatabase getEmbedDatabase() {
+        return embedDatabase;
     }
 }
