@@ -37,6 +37,22 @@ public class ComponentEntity {
     }
 
     /**
+     * Creates an instance.
+     *
+     * @param listenerId the ID of the listener, listening to this component
+     * @param expireDate the date for when the component expires
+     * @param arguments a list of all arguments
+     */
+    @Contract(pure = true)
+    public ComponentEntity(@Nullable final String listenerId, final int commandType, @Nullable final LocalDateTime expireDate, @NotNull final List<String> arguments) {
+        this.id = null;
+        this.listenerId = listenerId;
+        this.commandType = Command.Type.fromId(commandType);
+        this.expireDate = expireDate;
+        this.arguments = Collections.unmodifiableList(Objects.requireNonNull(arguments, "The given arguments cannot be null"));
+    }
+
+    /**
      * Creates an empty instance where {@link #getListenerId()} and {@link #expireDate} return null.
      *
      * @param id the ID of the component
@@ -54,7 +70,7 @@ public class ComponentEntity {
      *
      * @return the ID
      */
-    @NotNull
+    @Nullable
     public String getId() {
         return id;
     }

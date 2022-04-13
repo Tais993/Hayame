@@ -9,6 +9,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -22,6 +23,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Contains all existing {@link IDatabase IDatabase's}, and the {@link javax.sql.DataSource}.
+ *
+ * This class is also responsible for DB migration at the moment of speaking, this will be moved to Gradle eventually.
+ */
 public class Database {
     private static final Logger logger = LoggerFactory.getLogger(Database.class);
     private static final String DB_SCHEMA_BOT = "discordbot";
@@ -29,6 +35,7 @@ public class Database {
     private final HikariDataSource dataSource;
 
     private final EmbedDatabase embedDatabase;
+    private final ComponentDatabase componentDatabase;
 
     public Database(@NotNull final Config config) {
         HikariConfig hikariConfig = new HikariConfig();
@@ -48,6 +55,7 @@ public class Database {
 
 
         embedDatabase = new EmbedDatabase(this);
+        componentDatabase = new ComponentDatabase(this);
     }
 
     /**
@@ -107,5 +115,20 @@ public class Database {
 
     public EmbedDatabase getEmbedDatabase() {
         return embedDatabase;
+    }
+
+    public ComponentDatabase getComponentDatabase() {
+        return componentDatabase;
+    }
+
+    @NotNull
+    @NonNls
+    @Override
+    public String toString() {
+        return "Database{" +
+                "dataSource=" + dataSource +
+                ", embedDatabase=" + embedDatabase +
+                ", componentDatabase=" + componentDatabase +
+                '}';
     }
 }

@@ -68,7 +68,6 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
 
     private static EmbedTemplate resultSetToEmbedTemplate(@NotNull final ResultSet resultSet) {
         try {
-
             resultSet.first();
 
             EmbedTemplateBuilder builder = new EmbedTemplateBuilder();
@@ -86,7 +85,6 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
             builder.setMentions(Database.csvStringToArguments(resultSet.getString(10)));
 
             return builder.createEmbedTemplate();
-
         } catch (final SQLException e) {
             throw new RuntimeException(e);
         }

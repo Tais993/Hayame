@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEve
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
-import nl.tijsbeek.discord.components.ComponentDatabase;
+import nl.tijsbeek.database.databases.ComponentDatabase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 

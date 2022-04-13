@@ -11,7 +11,8 @@ import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.InteractionCommandState;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
-import nl.tijsbeek.discord.components.ComponentDatabase;
+import nl.tijsbeek.database.databases.ComponentDatabase;
+import nl.tijsbeek.discord.components.ComponentEntity;
 import org.jetbrains.annotations.*;
 
 import java.time.LocalDateTime;
@@ -50,7 +51,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
 
     public void setDatabase(final Database database) {
         this.database = database;
-        this.componentDatabase = new ComponentDatabase(database.getDataSource());
+        this.componentDatabase = database.getComponentDatabase();
     }
 
     /**
@@ -136,7 +137,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
     /**
      * Generates a component/modal ID.
      * <br/>
-     * Shortcut for {@link ComponentDatabase#createId(String, Integer, LocalDateTime, String...)}.
+     * Shortcut for {@link ComponentDatabase#insertAndReturnId(ComponentEntity)}.
      * The component doesn't expire, you can set an expiration date using {@link #generateId(LocalDateTime, String...)}.
      *
      * @param arguments the arguments
@@ -150,7 +151,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
     /**
      * Generates a component/modal ID.
      * <br/>
-     * Shortcut for {@link ComponentDatabase#createId(String, Integer, LocalDateTime, String...)}.
+     * Shortcut for {@link ComponentDatabase#insertAndReturnId(ComponentEntity)}.
      *
      * @param expirationDate the date for the component to expire
      * @param arguments      the arguments
@@ -158,7 +159,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      * @see #generateId(String...)
      */
     public @NotNull String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String... arguments) {
-        return componentDatabase.createId(getName(), getType().getId(), expirationDate, arguments);
+        return componentDatabase.insertAndReturnId(new ComponentEntity(getName(), getType().getId(), expirationDate, List.of(arguments)));
     }
 
     /**
@@ -168,7 +169,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      *
      * @return an unmodifiable {@link List} with the arguments
      *
-     * @see ComponentDatabase#retrieveComponentEntity(String)
+     * @see ComponentDatabase#retrieveById(String)
      */
     public List<String> getArgumentsComponent(@NotNull final ComponentInteraction event) {
         Objects.requireNonNull(event, "The given event cannot be null");
@@ -185,7 +186,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      *
      * @throws IllegalArgumentException when the given Component has no ID
      *
-     * @see ComponentDatabase#retrieveComponentEntity(String)
+     * @see ComponentDatabase#retrieveById(String)
      */
     public List<String> getArgumentsComponent(@NotNull final ActionComponent component) {
         Objects.requireNonNull(component, "The given ActionComponent cannot be null");
@@ -204,14 +205,14 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      *
      * @return an unmodifiable {@link List} with the arguments
      *
-     * @see ComponentDatabase#retrieveComponentEntity(String)
+     * @see ComponentDatabase#retrieveById(String)
      */
     @NotNull
     @Unmodifiable
     public List<String> getArgumentsComponent(@NotNull final String id) {
         Objects.requireNonNull(id, "The given ID cannot be null");
 
-        return componentDatabase.retrieveComponentEntity(id).getArguments();
+        return componentDatabase.retrieveById(id).getArguments();
     }
 
     @NonNls
