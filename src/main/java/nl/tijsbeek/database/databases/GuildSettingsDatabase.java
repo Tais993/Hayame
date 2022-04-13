@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
 
-    public GuildSettingsDatabase(final @NotNull Database database) {
+    GuildSettingsDatabase(final @NotNull Database database) {
         super(database.getDataSource());
     }
 

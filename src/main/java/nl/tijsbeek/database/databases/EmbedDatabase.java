@@ -16,7 +16,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
     private static final Logger logger = LoggerFactory.getLogger(EmbedDatabase.class);
 
     @Contract(pure = true)
-    protected EmbedDatabase(@NotNull final Database database) {
+    EmbedDatabase(@NotNull final Database database) {
         super(database.getDataSource());
     }
 

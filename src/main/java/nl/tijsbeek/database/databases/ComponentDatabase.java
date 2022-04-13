@@ -21,7 +21,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     private static final Logger logger = LoggerFactory.getLogger(ComponentDatabase.class);
 
     @Contract(pure = true)
-    public ComponentDatabase(@NotNull final Database database) {
+    ComponentDatabase(@NotNull final Database database) {
         super(database.getDataSource());
     }
 
