@@ -1,4 +1,4 @@
-package nl.tijsbeek.database;
+package nl.tijsbeek.database.databases;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -7,7 +7,6 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
-import nl.tijsbeek.database.databases.EmbedDatabase;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,6 @@ public class Database {
     private final EmbedDatabase embedDatabase;
 
     public Database(@NotNull final Config config) {
-
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mariadb://localhost:%s/".formatted(config.getDatabasePort()));
         hikariConfig.setUsername(config.getDatabaseUsername());
@@ -101,7 +99,7 @@ public class Database {
             return Collections.emptyList();
         }
     }
-
+    
     public HikariDataSource getDataSource() {
         return dataSource;
     }

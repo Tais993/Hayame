@@ -4,5 +4,5 @@ public interface IDatabase<Entity> {
 
     public Entity retrieveById(int id);
     public Entity deleteById(int id);
-    public Entity insert(Entity entity);
+    public void insert(Entity entity);
 }

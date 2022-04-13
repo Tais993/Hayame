@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
-import nl.tijsbeek.database.Database;
+import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.discord.commands.*;
 import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
 import nl.tijsbeek.discord.components.ComponentDatabase;

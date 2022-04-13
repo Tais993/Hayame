@@ -26,8 +26,9 @@ dependencies {
     implementation('ch.qos.logback:logback-classic:1.2.11')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
-
     implementation 'com.opencsv:opencsv:5.6'
+
+    implementation 'com.diffplug.durian:durian:3.4.0'
 
     /* DB */
     implementation 'org.flywaydb:flyway-core:8.5.1'

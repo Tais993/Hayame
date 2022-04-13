@@ -1,7 +1,7 @@
 package nl.tijsbeek.discord.components;
 
 import com.zaxxer.hikari.HikariDataSource;
-import nl.tijsbeek.database.Database;
+import nl.tijsbeek.database.databases.Database;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;

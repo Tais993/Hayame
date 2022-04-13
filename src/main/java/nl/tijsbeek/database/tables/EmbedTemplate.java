@@ -14,8 +14,8 @@ import java.util.List;
 
 public class EmbedTemplate {
 
-
-    private final TemporalAccessor timestamp;
+    private final int id;
+    private final boolean timestamp;
     private final String authorName;
     private final String authorUrl;
     private final String authorIconUrl;
@@ -26,10 +26,12 @@ public class EmbedTemplate {
     private final List<String> mentions;
 
 
-    public EmbedTemplate(final TemporalAccessor timestamp, final String authorName, final String authorUrl,
-                         final String authorIconUrl, final Color color, final String footerUrl,
-                         final String imageUrl, final String thumbnailUrl, final List<String> mentions) {
+    public EmbedTemplate(final int id, final boolean timestamp, final String authorName,
+                         final String authorUrl, final String authorIconUrl, final Color color,
+                         final String footerUrl, final String imageUrl, final String thumbnailUrl,
+                         final List<String> mentions) {
 
+        this.id = id;
         this.timestamp = timestamp;
         this.authorName = authorName;
         this.authorUrl = authorUrl;
@@ -41,7 +43,7 @@ public class EmbedTemplate {
         this.mentions = Collections.unmodifiableList(mentions);
     }
 
-    public TemporalAccessor getTimestamp() {
+    public boolean getTimestamp() {
         return timestamp;
     }
 
@@ -81,6 +83,9 @@ public class EmbedTemplate {
         return mentions;
     }
 
+    public int getId() {
+        return id;
+    }
 
     /**
      * <b>This doesn't set the footer URL!</b>
@@ -99,7 +104,8 @@ public class EmbedTemplate {
 
 
     public static class EmbedTemplateBuilder {
-        private TemporalAccessor timestamp;
+        private int id;
+        private boolean timestamp;
         private String authorName;
         private String authorUrl;
         private String authorIconUrl;
@@ -109,7 +115,15 @@ public class EmbedTemplate {
         private String thumbnailUrl;
         private List<String> mentions;
 
-        public EmbedTemplateBuilder setTimestamp(final TemporalAccessor timestamp) {
+        public void setId(final int id) {
+            this.id = id;
+        }
+
+        public void setId(final String id) {
+            this.id = Integer.parseInt(id);
+        }
+
+        public EmbedTemplateBuilder setTimestamp(final boolean timestamp) {
             this.timestamp = timestamp;
             return this;
         }
@@ -167,7 +181,7 @@ public class EmbedTemplate {
         }
 
         public EmbedTemplate createEmbedTemplate() {
-            return new EmbedTemplate(timestamp, authorName, authorUrl,
+            return new EmbedTemplate(id, timestamp, authorName, authorUrl,
                      authorIconUrl, color, footerUrl,
                     imageUrl, thumbnailUrl, mentions);
         }
