@@ -1,6 +1,6 @@
 package nl.tijsbeek.unit.database;
 
-import nl.tijsbeek.database.Database;
+import nl.tijsbeek.database.databases.Database;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

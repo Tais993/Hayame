@@ -1,4 +1,4 @@
-package nl.tijsbeek.database;
+package nl.tijsbeek.database.databases;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -7,9 +7,9 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
-import nl.tijsbeek.discord.components.ComponentDatabase;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -19,19 +19,25 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Contains all existing {@link IDatabase IDatabase's}, and the {@link javax.sql.DataSource}.
+ *
+ * This class is also responsible for DB migration at the moment of speaking, this will be moved to Gradle eventually.
+ */
 public class Database {
     private static final Logger logger = LoggerFactory.getLogger(Database.class);
     private static final String DB_SCHEMA_BOT = "discordbot";
 
     private final HikariDataSource dataSource;
 
-    public Database(@NotNull final Config config) {
+    private final EmbedDatabase embedDatabase;
+    private final ComponentDatabase componentDatabase;
 
+    public Database(@NotNull final Config config) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mariadb://localhost:%s/".formatted(config.getDatabasePort()));
         hikariConfig.setUsername(config.getDatabaseUsername());
@@ -46,6 +52,10 @@ public class Database {
                         .dataSource(dataSource)
                         .locations("classpath:/db/").load();
         flyway.migrate();
+
+
+        embedDatabase = new EmbedDatabase(this);
+        componentDatabase = new ComponentDatabase(this);
     }
 
     /**
@@ -97,8 +107,28 @@ public class Database {
             return Collections.emptyList();
         }
     }
-
+    
     public HikariDataSource getDataSource() {
         return dataSource;
+    }
+
+
+    public EmbedDatabase getEmbedDatabase() {
+        return embedDatabase;
+    }
+
+    public ComponentDatabase getComponentDatabase() {
+        return componentDatabase;
+    }
+
+    @NotNull
+    @NonNls
+    @Override
+    public String toString() {
+        return "Database{" +
+                "dataSource=" + dataSource +
+                ", embedDatabase=" + embedDatabase +
+                ", componentDatabase=" + componentDatabase +
+                '}';
     }
 }

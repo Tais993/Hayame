@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.interactions.components.text.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
-import nl.tijsbeek.database.Database;
+import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.database.databases.EmbedDatabase;
 import nl.tijsbeek.database.tables.EmbedTemplate;
 import nl.tijsbeek.database.tables.EmbedTemplate.EmbedTemplateBuilder;
@@ -98,7 +98,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
     @Override
     public void setDatabase(final Database database) {
         super.setDatabase(database);
-        this.embedDatabase = new EmbedDatabase(database.getDataSource());
+        this.embedDatabase = database.getEmbedDatabase();
     }
 
     private static @NotNull OptionData generateColourOption() {
@@ -214,11 +214,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
         EmbedTemplateBuilder builder = new EmbedTemplateBuilder();
 
-        Instant timestamp = event.getOption(TIMESTAMP_OPTION, (OptionMapping optionMapping) -> {
-            return (optionMapping.getAsBoolean()) ? Instant.now() : null;
-        });
+        boolean includeTimestamp = Boolean.TRUE.equals(event.getOption(TIMESTAMP_OPTION, OptionMapping::getAsBoolean));
 
-        builder.setTimestamp(timestamp);
+        builder.setTimestamp(includeTimestamp);
 
 
         User author = event.getOption(AUTHOR_OPTION, OptionMapping::getAsUser);
@@ -249,7 +247,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
         String id = generateId();
 
-        embedDatabase.insertEmbedTemplate(builder.createEmbedTemplate(), id);
+        builder.setId(id);
+
+        embedDatabase.insert(builder.createEmbedTemplate());
 
         Modal modal = Modal.create(id, "Embed content")
                 .addActionRow(TextInput.create(generateId("title"), locale.getString("embed.modal.title"), TextInputStyle.SHORT).setRequired(true).build())
@@ -286,7 +286,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
         ResourceBundle locale = LocaleHelper.getSlashCommandResource(event.getUserLocale());
 
 
-        EmbedTemplate embedTemplate = embedDatabase.retrieveEmbedTemplate(event.getModalId());
+        EmbedTemplate embedTemplate = embedDatabase.retrieveById(event.getModalId());
 
 
         EmbedBuilder builder = embedTemplate.toEmbedBuilder();
@@ -312,6 +312,6 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
         event.reply(locale.getString("embed.success")).setEphemeral(true).queue();
 
-        embedDatabase.deleteEmbedTemplate(event.getModalId());
+        embedDatabase.deleteById(event.getModalId());
     }
 }

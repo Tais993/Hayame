@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import nl.tijsbeek.config.Config;
-import nl.tijsbeek.database.Database;
+import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.discord.system.CommandHandler;
 import nl.tijsbeek.discord.system.EventHandler;
 import nl.tijsbeek.discord.system.ListenersList;
@@ -23,6 +23,7 @@ import java.io.IOException;
  */
 public final class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    public static final String HAMAYE_CONFIG_LOCATION = "hamaye.config.location";
 
     @Contract(pure = true)
     private Application() {}
@@ -36,14 +37,15 @@ public final class Application {
      * @throws IOException {@link Config#loadInstance(String)}
      */
     public static void main(@NotNull final String @NotNull [] args) throws LoginException, IOException, InterruptedException {
-        String configLocation = System.getProperty("hamaye.config.location");
+        String configLocation = System.getProperty(HAMAYE_CONFIG_LOCATION);
 
         if (configLocation == null) {
-            configLocation = System.getenv("hamaye.config.location");
+            configLocation = System.getenv(HAMAYE_CONFIG_LOCATION);
         }
 
         if (configLocation == null) {
-            throw new IllegalArgumentException("Missing config location! Set a system env variable (hamaye.config.location)");
+            System.out.println(System.getenv());
+            throw new IllegalArgumentException("Missing config location! Set a system env variable (%s)".formatted(HAMAYE_CONFIG_LOCATION));
         }
 
         Config config = Config.loadInstance(configLocation);

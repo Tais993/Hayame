@@ -27,10 +27,10 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.Modal;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
-import nl.tijsbeek.database.Database;
+import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.discord.commands.*;
 import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
-import nl.tijsbeek.discord.components.ComponentDatabase;
+import nl.tijsbeek.database.databases.ComponentDatabase;
 import nl.tijsbeek.discord.components.ComponentEntity;
 import nl.tijsbeek.prometheus.Metrics;
 import nl.tijsbeek.prometheus.MetricsHandler;
@@ -83,7 +83,7 @@ public class CommandHandler extends ListenerAdapter {
      * @param listenersList the {@link ListenersList} which contains all commands
      */
     public CommandHandler(@NotNull final Database database, @NotNull final ListenersList listenersList) {
-        componentDatabase = new ComponentDatabase(database.getDataSource());
+        componentDatabase = database.getComponentDatabase();
 
         commands = listenersList.getCommands().stream()
                 .peek(command -> {
@@ -220,7 +220,7 @@ public class CommandHandler extends ListenerAdapter {
         executor.execute(() -> {
             String id = event.getComponentId();
 
-            ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+            ComponentEntity componentEntity = componentDatabase.retrieveById(id);
 
             String effectiveListenerId = (componentEntity.getListenerId() == null) ? "" : componentEntity.getListenerId();
             Metrics.GENERIC_COMPONENTS.labels("selectmenu", effectiveListenerId).inc();
@@ -263,7 +263,7 @@ public class CommandHandler extends ListenerAdapter {
         executor.execute(() -> {
             String id = event.getComponentId();
 
-            ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+            ComponentEntity componentEntity = componentDatabase.retrieveById(id);
 
             String effectiveListenerId = (componentEntity.getListenerId() == null) ? "" : componentEntity.getListenerId();
             Metrics.GENERIC_COMPONENTS.labels("button", effectiveListenerId).inc();
@@ -292,7 +292,7 @@ public class CommandHandler extends ListenerAdapter {
         executor.execute(() -> {
             String id = event.getModalId();
 
-            ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(id);
+            ComponentEntity componentEntity = componentDatabase.retrieveById(id);
 
             String effectiveListenerId = (componentEntity.getListenerId() == null) ? "" : componentEntity.getListenerId();
             Metrics.GENERIC_MODALS.labels(effectiveListenerId).inc();
@@ -305,10 +305,10 @@ public class CommandHandler extends ListenerAdapter {
                 });
             }
 
-            componentDatabase.remove(id);
+            componentDatabase.deleteById(id);
             event.getValues().stream()
                     .map(ModalMapping::getId)
-                    .forEach(componentDatabase::remove);
+                    .forEach(componentDatabase::deleteById);
         });
     }
 
@@ -346,13 +346,13 @@ public class CommandHandler extends ListenerAdapter {
             return component;
         }
 
-        ComponentEntity componentEntity = componentDatabase.retrieveComponentEntity(actionComponent.getId());
+        ComponentEntity componentEntity = componentDatabase.retrieveById(actionComponent.getId());
 
         if (!componentEntity.isExpired()) {
             return component;
         }
 
-        componentDatabase.remove(componentEntity.getId());
+        componentDatabase.deleteById(componentEntity.getId());
 
         if (component instanceof Button button) {
             return button.asDisabled();
