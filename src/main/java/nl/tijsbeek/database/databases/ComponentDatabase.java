@@ -3,7 +3,6 @@ package nl.tijsbeek.database.databases;
 import com.diffplug.common.base.Errors;
 import nl.tijsbeek.discord.components.ComponentEntity;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     }
 
     @Override
-    public ComponentEntity retrieveById(final int id) {
+    public ComponentEntity retrieveById(final long id) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.embeds
@@ -36,7 +35,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     }
 
     @Override
-    public ComponentEntity deleteById(final int id) {
+    public ComponentEntity deleteById(final long id) {
         return withReturn("""
                 DELETE FROM discordbot.embeds
                 WHERE id = ?
@@ -78,7 +77,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
 
 
 
-    private static Consumer<PreparedStatement> setIdConsumer(final int id) {
+    private static Consumer<PreparedStatement> setIdConsumer(final long id) {
         return Errors.rethrow().wrap(statement -> {
             statement.setString(1, String.valueOf(id));
         });

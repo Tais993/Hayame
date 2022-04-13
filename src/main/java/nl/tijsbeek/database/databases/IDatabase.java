@@ -16,7 +16,7 @@ public interface IDatabase<Entity> {
      *
      * @return the entity
      */
-    public Entity retrieveById(int id);
+    public Entity retrieveById(long id);
 
     /**
      * Deletes the entity by the given ID, and returns the (deleted) entity.
@@ -25,7 +25,7 @@ public interface IDatabase<Entity> {
      *
      * @return the deleted entity
      */
-    public Entity deleteById(int id);
+    public Entity deleteById(long id);
 
     /**
      * Inserts the given entity, to the database.

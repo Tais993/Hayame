@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.*;
-import java.time.Instant;
 import java.util.function.Consumer;
 
 public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IStringDatabase<EmbedTemplate> {
@@ -22,7 +21,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
     }
 
     @Override
-    public EmbedTemplate retrieveById(final int id) {
+    public EmbedTemplate retrieveById(final long id) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.embeds
@@ -31,7 +30,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
     }
 
     @Override
-    public EmbedTemplate deleteById(final int id) {
+    public EmbedTemplate deleteById(final long id) {
         return withReturn("""
                 DELETE FROM discordbot.embeds
                 WHERE id = ?
@@ -60,7 +59,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
     }
 
 
-    private static Consumer<PreparedStatement> setIdConsumer(final int id) {
+    private static Consumer<PreparedStatement> setIdConsumer(final long id) {
         return Errors.rethrow().wrap(statement -> {
             statement.setString(1, String.valueOf(id));
         });
