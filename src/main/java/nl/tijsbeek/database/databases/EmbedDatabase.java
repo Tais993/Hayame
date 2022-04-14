@@ -26,7 +26,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
                 SELECT *
                 FROM discordbot.embeds
                 WHERE id = ?
-                """, setIdConsumer(id), EmbedDatabase::resultSetToEmbedTemplate);
+                """, setIdStringConsumer(id), EmbedDatabase::resultSetToEmbedTemplate);
     }
 
     @Override
@@ -35,15 +35,27 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
                 DELETE FROM discordbot.embeds
                 WHERE id = ?
                 RETURNING *
-                """, setIdConsumer(id), EmbedDatabase::resultSetToEmbedTemplate);
+                """, setIdStringConsumer(id), EmbedDatabase::resultSetToEmbedTemplate);
     }
 
     @Override
-    public void insert(final EmbedTemplate embedTemplate) {
+    public void insert(final @NotNull EmbedTemplate embedTemplate) {
         withoutReturn("""
                 INSERT INTO discordbot.embeds(id, timestamp, author_name, author_url, author_icon_url, colour, footer_url, image_url, thumbnail_url, who_what_to_ping)
                 VALUES (?,?,?,?,?,?,?,?,?,?)
-                """, Errors.rethrow().wrap(statement -> {
+                """, statementSetter(embedTemplate));
+    }
+
+    @Override
+    public void replace(@NotNull final EmbedTemplate embedTemplate) {
+        withoutReturn("""
+                REPLACE INTO discordbot.embeds(id, timestamp, author_name, author_url, author_icon_url, colour, footer_url, image_url, thumbnail_url, who_what_to_ping)
+                VALUES (?,?,?,?,?,?,?,?,?,?)
+                """, statementSetter(embedTemplate));
+    }
+
+    private Consumer<PreparedStatement> statementSetter(@NotNull final EmbedTemplate embedTemplate) {
+        return Errors.rethrow().wrap(statement -> {
             statement.setString(1, String.valueOf(embedTemplate.getId()));
 
             statement.setBoolean(2, embedTemplate.getTimestamp());
@@ -55,13 +67,6 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
             statement.setString(8, embedTemplate.getImageUrl());
             statement.setString(9, embedTemplate.getThumbnailUrl());
             statement.setString(10, Database.argumentsToCsvString(embedTemplate.getMentions()));
-        }));
-    }
-
-
-    private static Consumer<PreparedStatement> setIdConsumer(final long id) {
-        return Errors.rethrow().wrap(statement -> {
-            statement.setString(1, String.valueOf(id));
         });
     }
 

@@ -1,5 +1,7 @@
 package nl.tijsbeek.database.databases;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Interface with universal methods to work against the bloat that existed before.
  *
@@ -16,7 +18,7 @@ public interface IDatabase<Entity> {
      *
      * @return the entity
      */
-    public Entity retrieveById(long id);
+    Entity retrieveById(long id);
 
     /**
      * Deletes the entity by the given ID, and returns the (deleted) entity.
@@ -25,12 +27,25 @@ public interface IDatabase<Entity> {
      *
      * @return the deleted entity
      */
-    public Entity deleteById(long id);
+    Entity deleteById(long id);
 
     /**
      * Inserts the given entity, to the database.
      *
+     * The handling on duplication is fully up-to the implementation, this can be either an error or ignore.
+     * Use {@link #replace(Object)} if you know an entrance exists already.
+     *
      * @param entity the entity
      */
-    public void insert(Entity entity);
+    void insert(@NotNull Entity entity);
+
+    /**
+     * Inserts updates the given entity, to the database.
+     * <b>This replaces the old entry, so use correctly!</b>
+     *
+     * <p>There are no plans for adding a way to only update individual values in a generic way, the implementation might offer a way to.
+     *
+     * @param entity the entity
+     */
+    void replace(@NotNull Entity entity);
 }

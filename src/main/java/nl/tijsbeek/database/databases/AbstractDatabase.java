@@ -1,5 +1,6 @@
 package nl.tijsbeek.database.databases;
 
+import com.diffplug.common.base.Errors;
 import nl.tijsbeek.discord.components.ComponentEntity;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -85,5 +86,56 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
         } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Returns a consumer which set's the first parameter to the given ID as a Long.
+     * <br>This method offers no customizable, purely because it's rarely needed differently.
+     *
+     * @param id the ID to set the first parameter to
+     *
+     * @return a consumer which sets the first parameter to the given ID
+     *
+     * @see #setIdStringConsumer(String)
+     */
+    public static Consumer<PreparedStatement> setIdLongConsumer(final long id) {
+        return Errors.rethrow().wrap(statement -> {
+            statement.setLong(1, id);
+        });
+    }
+
+    /**
+     * Returns a consumer which set's the first parameter to the given ID as a String.
+     * <br>This method offers no customizable, purely because it's rarely needed differently.
+     *
+     * <br>This method is equal to {@link #setIdStringConsumer(String)}, but just includes a {@link String#valueOf(long)} for easier development.
+     *
+     * @param id the ID to set the first parameter to
+     *
+     * @return a consumer which sets the first parameter to the given ID
+     *
+     * @see #setIdStringConsumer(String)
+     * @see #setIdLongConsumer(long)
+     */
+    public static Consumer<PreparedStatement> setIdStringConsumer(final long id) {
+        return setIdStringConsumer(String.valueOf(id));
+    }
+
+
+    /**
+     * Returns a consumer which set's the first parameter to the given ID as a String.
+     * <br>This method offers no customizable, purely because it's rarely needed differently.
+     *
+     * @param id the ID to set the first parameter to
+     *
+     * @return a consumer which sets the first parameter to the given ID
+     *
+     * @see #setIdStringConsumer(long)
+     * @see #setIdLongConsumer(long)
+     */
+    public static Consumer<PreparedStatement> setIdStringConsumer(final String id) {
+        return Errors.rethrow().wrap(statement -> {
+            statement.setString(1, String.valueOf(id));
+        });
     }
 }
