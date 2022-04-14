@@ -31,7 +31,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
                 SELECT *
                 FROM discordbot.embeds
                 WHERE id = ?
-                """, setIdConsumer(id), ComponentDatabase::resultSetToComponentEntity);
+                """, setIdStringConsumer(id), ComponentDatabase::resultSetToComponentEntity);
     }
 
     @Override
@@ -40,7 +40,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
                 DELETE FROM discordbot.embeds
                 WHERE id = ?
                 RETURNING *
-                """, setIdConsumer(id), ComponentDatabase::resultSetToComponentEntity);
+                """, setIdStringConsumer(id), ComponentDatabase::resultSetToComponentEntity);
     }
 
     /**
@@ -52,9 +52,17 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
      * @see #insertAndReturnId(ComponentEntity)
      */
     @Override
-    public void insert(final ComponentEntity componentEntity) {
+    public void insert(final @NotNull ComponentEntity componentEntity) {
         withoutReturn("""
                 INSERT INTO discordbot.component (listener_id, command_type, expire_date, arguments)
+                VALUES (?, ?, ?, ?)
+                """, setComponentEntity(componentEntity));
+    }
+
+    @Override
+    public void replace(@NotNull final ComponentEntity componentEntity) {
+        withoutReturn("""
+                REPLACE INTO discordbot.component (listener_id, command_type, expire_date, arguments)
                 VALUES (?, ?, ?, ?)
                 """, setComponentEntity(componentEntity));
     }
@@ -73,14 +81,6 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
                 RETURNING id
                 """, setComponentEntity(componentEntity),
                 Errors.rethrow().wrap((ResultSet resultSet) -> resultSet.getString(1)));
-    }
-
-
-
-    private static Consumer<PreparedStatement> setIdConsumer(final long id) {
-        return Errors.rethrow().wrap(statement -> {
-            statement.setString(1, String.valueOf(id));
-        });
     }
 
     @NotNull
