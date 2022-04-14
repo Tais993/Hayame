@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -151,7 +150,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
     @Nullable
     @Contract("_, null -> null")
     private static Color stringToRgbColor(@NotNull final IReplyCallback interaction, @Nullable final String colorString) {
-        ResourceBundle locale = LocaleHelper.getSlashCommandResource(interaction.getUserLocale());
+        ResourceBundle locale = LocaleHelper.getBotResource(interaction.getUserLocale());
 
         if (null == colorString || colorString.isBlank()) {
             return null;
@@ -162,7 +161,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
                     .toList();
 
             if (3 != rgbValues.size()) {
-                interaction.reply(locale.getString("embed.error.invalid.custom-rgb")).queue();
+                interaction.reply(locale.getString("command.embed.error.invalid.custom-rgb")).queue();
             }
 
             return new Color(rgbValues.get(0), rgbValues.get(1), rgbValues.get(2));
@@ -170,7 +169,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
             try {
                 return Color.decode(colorString);
             } catch (final NumberFormatException e) {
-                interaction.reply(locale.getString("embed.error.invalid.hex")).queue();
+                interaction.reply(locale.getString("command.embed.error.invalid.hex")).queue();
                 return null;
             }
 
@@ -178,7 +177,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
             Integer rgb = toInt(colorString);
 
             if (null == rgb) {
-                interaction.reply(locale.getString("embed.error.invalid.int-rgb")).queue();
+                interaction.reply(locale.getString("command.embed.error.invalid.int-rgb")).queue();
                 return null;
             }
 
@@ -202,7 +201,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
     @Override
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
-        ResourceBundle locale = LocaleHelper.getSlashCommandResource(event.getUserLocale());
+        ResourceBundle locale = LocaleHelper.getBotResource(event.getUserLocale());
 
         Color colour = getEffectiveColor(event);
 
@@ -252,9 +251,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
         embedDatabase.insert(builder.createEmbedTemplate());
 
         Modal modal = Modal.create(id, "Embed content")
-                .addActionRow(TextInput.create(generateId("title"), locale.getString("embed.modal.title"), TextInputStyle.SHORT).setRequired(true).build())
-                .addActionRow(TextInput.create(generateId("description"), locale.getString("embed.modal.description"), TextInputStyle.PARAGRAPH).setMaxLength(4000).build())
-                .addActionRow(TextInput.create(generateId("footer_text"), locale.getString("embed.modal.footer"), TextInputStyle.PARAGRAPH).setMaxLength(2048).build())
+                .addActionRow(TextInput.create(generateId("title"), locale.getString("command.embed.modal.title"), TextInputStyle.SHORT).setRequired(true).build())
+                .addActionRow(TextInput.create(generateId("description"), locale.getString("command.embed.modal.description"), TextInputStyle.PARAGRAPH).setMaxLength(4000).build())
+                .addActionRow(TextInput.create(generateId("footer_text"), locale.getString("command.embed.modal.footer"), TextInputStyle.PARAGRAPH).setMaxLength(2048).build())
                 .build();
 
         event.replyModal(modal).queue();
@@ -283,7 +282,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
     @Override
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
-        ResourceBundle locale = LocaleHelper.getSlashCommandResource(event.getUserLocale());
+        ResourceBundle locale = LocaleHelper.getBotResource(event.getUserLocale());
 
 
         EmbedTemplate embedTemplate = embedDatabase.retrieveById(event.getModalId());
@@ -310,7 +309,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
                 .content(StreamUtils.toJoinedString(embedTemplate.getMentions().stream(), ","))
                 .queue();
 
-        event.reply(locale.getString("embed.success")).setEphemeral(true).queue();
+        event.reply(locale.getString("command.embed.success")).setEphemeral(true).queue();
 
         embedDatabase.deleteById(event.getModalId());
     }

@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
 import nl.tijsbeek.discord.commands.abstractions.AbstractSlashCommand;
 import nl.tijsbeek.utils.EmbedUtils;
@@ -25,16 +24,16 @@ public class CoinFlip extends AbstractSlashCommand {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        ResourceBundle resourceBundle = LocaleHelper.getSlashCommandResource(event.getUserLocale());
+        ResourceBundle resourceBundle = LocaleHelper.getBotResource(event.getUserLocale());
 
         event.replyEmbeds(getHeadOrTails(resourceBundle, event.getMember()))
-                .addActionRow(Button.primary(generateId("retry"), resourceBundle.getString("coinflip.retryButton")))
+                .addActionRow(Button.primary(generateId("retry"), resourceBundle.getString("command.coinflip.retry")))
                 .queue();
     }
 
     @Override
     public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
-        ResourceBundle resourceBundle = LocaleHelper.getSlashCommandResource(event.getUserLocale());
+        ResourceBundle resourceBundle = LocaleHelper.getBotResource(event.getUserLocale());
         List<String> argumentsComponent = getArgumentsComponent(event);
 
         if ("retry".equals(argumentsComponent.get(0))) {
@@ -50,9 +49,9 @@ public class CoinFlip extends AbstractSlashCommand {
         EmbedBuilder embedBuilder = EmbedUtils.createBuilder(member);
 
         if (isHeads) {
-            embedBuilder.setDescription(resourceBundle.getString("coinflip.head"));
+            embedBuilder.setDescription(resourceBundle.getString("command.coinflip.head"));
         } else {
-            embedBuilder.setDescription(resourceBundle.getString("coinflip.tails"));
+            embedBuilder.setDescription(resourceBundle.getString("command.coinflip.tails"));
         }
 
         return embedBuilder.build();

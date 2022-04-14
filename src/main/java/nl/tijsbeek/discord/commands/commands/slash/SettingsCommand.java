@@ -8,15 +8,16 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
-import nl.tijsbeek.database.databases.GuildSettingsDatabase;
 import nl.tijsbeek.database.tables.GuildSettings;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
 import nl.tijsbeek.discord.commands.abstractions.AbstractSlashCommand;
 import nl.tijsbeek.utils.EmbedUtils;
+import nl.tijsbeek.utils.LocaleHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 public final class SettingsCommand extends AbstractSlashCommand {
 
@@ -68,6 +69,8 @@ public final class SettingsCommand extends AbstractSlashCommand {
     }
 
     private void setSubCommand(@NotNull final SlashCommandInteractionEvent event, @NotNull final GuildSettings guildSettings) {
+        ResourceBundle resource = LocaleHelper.getBotResource(event.getUserLocale());
+
         String name;
         String newValue;
 
@@ -86,8 +89,8 @@ public final class SettingsCommand extends AbstractSlashCommand {
         }
 
         EmbedBuilder builder = EmbedUtils.createBuilder(event.getMember())
-                .setTitle("Updated " + name)
-                .setDescription("It's new value is " + newValue + "!");
+                .setTitle(resource.getString("command.settings.set.title").formatted(name))
+                .setDescription(resource.getString("command.settings.set.description").formatted(newValue));
 
 
         database.getGuildSettingsDatabase().replace(guildSettings);
@@ -96,6 +99,7 @@ public final class SettingsCommand extends AbstractSlashCommand {
     }
 
     private void getSubCommand(@NotNull final SlashCommandInteractionEvent event, @NotNull final GuildSettings guildSettings) {
+        ResourceBundle resource = LocaleHelper.getBotResource(event.getUserLocale());
 
         String name;
         String value;
@@ -110,8 +114,8 @@ public final class SettingsCommand extends AbstractSlashCommand {
         }
 
         EmbedBuilder builder = EmbedUtils.createBuilder(event.getMember())
-                .setTitle("Value of " + name)
-                .setDescription("This setting has been set to " + value);
+                .setTitle(resource.getString("command.settings.get.title").formatted(name))
+                .setDescription(resource.getString("command.settings.get.description").formatted(value));
 
 
         database.getGuildSettingsDatabase().replace(guildSettings);
