@@ -1,15 +1,11 @@
 package nl.tijsbeek.database.databases;
 
 import com.diffplug.common.base.Errors;
-import nl.tijsbeek.database.tables.EmbedTemplate;
 import nl.tijsbeek.database.tables.GuildSettings;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.function.Consumer;
 
 public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
 
@@ -24,7 +20,7 @@ public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
                 SELECT *
                 FROM discordbot.guild_settings
                 WHERE guild_id = ?
-                """, setIdConsumer(id), GuildSettingsDatabase::resultSetToGuildSettings);
+                """, setIdLongConsumer(id), GuildSettingsDatabase::resultSetToGuildSettings);
     }
 
 
@@ -34,25 +30,40 @@ public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
                 DELETE FROM discordbot.guild_settings
                 WHERE guild_id = ?
                 RETURNING *
-                """, setIdConsumer(id), GuildSettingsDatabase::resultSetToGuildSettings);
+                """, setIdLongConsumer(id), GuildSettingsDatabase::resultSetToGuildSettings);
     }
 
+    /**
+     * This inserts the given settings when it didn't exist beforehand.
+     * Use {@link #replace(GuildSettings)} for replacing.
+     *
+     * @param guildSettings the entity
+     */
     @Override
     public void insert(@NotNull final GuildSettings guildSettings) {
         withoutReturn("""
                 INSERT INTO discordbot.guild_settings (guild_id, reports_log_channel)
+                SELECT ?, ? FROM DUAL
+                WHERE NOT EXISTS (SELECT * FROM discordbot.guild_settings
+                      WHERE guild_id=?);
+                """, Errors.rethrow().wrap(statement -> {
+
+            statement.setLong(1, guildSettings.getGuildId());
+            statement.setLong(2, guildSettings.getReportChannelId());
+
+            statement.setLong(3, guildSettings.getGuildId());
+        }));
+    }
+
+    @Override
+    public void replace(@NotNull final GuildSettings guildSettings) {
+        withoutReturn("""
+                REPLACE INTO discordbot.guild_settings (guild_id, reports_log_channel)
                 VALUES (?, ?)
                 """, Errors.rethrow().wrap(statement -> {
             statement.setLong(1, guildSettings.getGuildId());
             statement.setLong(2, guildSettings.getReportChannelId());
         }));
-    }
-
-
-    private static Consumer<PreparedStatement> setIdConsumer(final long id) {
-        return Errors.rethrow().wrap(statement -> {
-            statement.setLong(1, id);
-        });
     }
 
     private static @NotNull GuildSettings resultSetToGuildSettings(@NotNull final ResultSet resultSet) {

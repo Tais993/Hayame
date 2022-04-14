@@ -36,6 +36,7 @@ public class Database {
 
     private final EmbedDatabase embedDatabase;
     private final ComponentDatabase componentDatabase;
+    private final GuildSettingsDatabase guildSettingsDatabase;
 
     public Database(@NotNull final Config config) {
         HikariConfig hikariConfig = new HikariConfig();
@@ -56,6 +57,7 @@ public class Database {
 
         embedDatabase = new EmbedDatabase(this);
         componentDatabase = new ComponentDatabase(this);
+        guildSettingsDatabase = new GuildSettingsDatabase(this);
     }
 
     /**
@@ -121,6 +123,10 @@ public class Database {
         return componentDatabase;
     }
 
+    public GuildSettingsDatabase getGuildSettingsDatabase() {
+        return guildSettingsDatabase;
+    }
+
     @NotNull
     @NonNls
     @Override
@@ -129,6 +135,7 @@ public class Database {
                 "dataSource=" + dataSource +
                 ", embedDatabase=" + embedDatabase +
                 ", componentDatabase=" + componentDatabase +
+                ", guildSettingsDatabase=" + guildSettingsDatabase +
                 '}';
     }
 }
