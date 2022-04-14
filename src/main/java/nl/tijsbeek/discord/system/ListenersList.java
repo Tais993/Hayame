@@ -1,10 +1,13 @@
 package nl.tijsbeek.discord.system;
 
+import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.commands.context.message.AaaaaMCommand;
+import nl.tijsbeek.discord.commands.commands.context.message.ReportMessageCommand;
 import nl.tijsbeek.discord.commands.commands.context.user.AaaaaUCommand;
 import nl.tijsbeek.discord.commands.commands.slash.*;
 import nl.tijsbeek.discord.events.CustomEventListener;
+import nl.tijsbeek.discord.events.listeners.GuildSettingsListener;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -24,16 +27,14 @@ public class ListenersList {
     /**
      * Creates an instance.
      */
-    public ListenersList() {
+    public ListenersList(@NotNull final Database database) {
         List<CustomEventListener> eventListeners = new ArrayList<>(20);
 
-        // TEMPORARY PLACEHOLDER AGAINST WARNINGS
-        eventListeners.contains(null);
+        eventListeners.add(new GuildSettingsListener(database));
 
 
         List<InteractionCommand> commands = new ArrayList<>(20);
 
-        // TEMPORARY PLACEHOLDER AGAINST WARNINGS
         commands.add(new TestCommand());
         commands.add(new GrrrCommand());
         commands.add(new AaaaaMCommand());
@@ -41,6 +42,7 @@ public class ListenersList {
         commands.add(new AskQuestionCommand());
         commands.add(new CoinFlip());
         commands.add(new EmbedCommand());
+        commands.add(new SettingsCommand());
 
 
         this.eventListeners = eventListeners;

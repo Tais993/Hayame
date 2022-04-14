@@ -52,7 +52,7 @@ public final class Application {
 
         Database database = new Database(config);
 
-        ListenersList listenersList = new ListenersList();
+        ListenersList listenersList = new ListenersList(database);
 
         CommandHandler commandHandler = new CommandHandler(database, listenersList);
         EventHandler eventHandler = new EventHandler(listenersList);
