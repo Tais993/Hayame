@@ -43,7 +43,8 @@ public class ListenersList {
         commands.add(new CoinFlip());
         commands.add(new EmbedCommand());
         commands.add(new SettingsCommand());
-
+        commands.add(new ReportSlashCommand());
+        commands.add(new ReportMessageCommand());
 
         this.eventListeners = eventListeners;
         this.commands = commands;
