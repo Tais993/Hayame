@@ -5,6 +5,7 @@ import nl.tijsbeek.database.tables.EmbedTemplate;
 import nl.tijsbeek.database.tables.EmbedTemplate.EmbedTemplateBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
     }
 
     @Override
-    public EmbedTemplate retrieveById(final long id) {
+    public @Nullable EmbedTemplate retrieveById(final long id) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.embeds
@@ -30,7 +31,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
     }
 
     @Override
-    public EmbedTemplate deleteById(final long id) {
+    public @Nullable EmbedTemplate deleteById(final long id) {
         return withReturn("""
                 DELETE FROM discordbot.embeds
                 WHERE id = ?
@@ -72,8 +73,6 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
 
     private static EmbedTemplate resultSetToEmbedTemplate(@NotNull final ResultSet resultSet) {
         try {
-            resultSet.first();
-
             EmbedTemplateBuilder builder = new EmbedTemplateBuilder();
 
             builder.setId(resultSet.getInt(1));

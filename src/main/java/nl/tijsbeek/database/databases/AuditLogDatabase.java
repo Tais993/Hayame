@@ -5,6 +5,7 @@ import nl.tijsbeek.database.tables.CustomAuditLogEntry;
 import nl.tijsbeek.database.tables.CustomAuditLogEntry.CustomAuditLogEntryBuilder;
 import nl.tijsbeek.database.tables.CustomAuditLogEntry.Type;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
     }
 
     @Override
-    public CustomAuditLogEntry retrieveById(final long id) {
+    public @Nullable CustomAuditLogEntry retrieveById(final long id) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.audit_log
@@ -29,7 +30,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
                 """, setIdLongConsumer(id), AuditLogDatabase::resultSetToAuditLogEntry);
     }
 
-    public List<CustomAuditLogEntry> retrieveByTargetId(final long id) {
+    public @Nullable List<CustomAuditLogEntry> retrieveByTargetId(final long id) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.audit_log
@@ -37,7 +38,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
                 """, setIdLongConsumer(id), AuditLogDatabase::resultSetToAuditLogEntries);
     }
 
-    public List<CustomAuditLogEntry> retrieveByTargetIdAndType(final long id, final Type type) {
+    public @Nullable List<CustomAuditLogEntry> retrieveByTargetIdAndType(final long id, final Type type) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.audit_log
@@ -49,7 +50,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
     }
 
 
-    public List<CustomAuditLogEntry> retrieveByAuthorId(final long id) {
+    public @Nullable List<CustomAuditLogEntry> retrieveByAuthorId(final long id) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.audit_log
@@ -59,7 +60,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
 
 
     @Override
-    public CustomAuditLogEntry deleteById(final long id) {
+    public @Nullable CustomAuditLogEntry deleteById(final long id) {
         return withReturn("""
                 DELETE FROM discordbot.audit_log
                 WHERE case_id = ?
@@ -100,8 +101,6 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
 
     private static @NotNull CustomAuditLogEntry resultSetToAuditLogEntry(@NotNull final ResultSet resultSet) {
         try {
-            resultSet.first();
-
             return new CustomAuditLogEntryBuilder()
                     .setCaseId(resultSet.getLong("case_id"))
                     .setAuthor(resultSet.getLong("author"))
