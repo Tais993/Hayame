@@ -27,7 +27,7 @@ public class CoinFlip extends AbstractSlashCommand {
         ResourceBundle resourceBundle = LocaleHelper.getBotResource(event.getUserLocale());
 
         event.replyEmbeds(getHeadOrTails(resourceBundle, event.getMember()))
-                .addActionRow(Button.primary(generateId("retry"), resourceBundle.getString("command.coinflip.retry")))
+                .addActionRow(Button.primary(generateId("retry", event.getMember().getId()), resourceBundle.getString("command.coinflip.retry")))
                 .queue();
     }
 
@@ -35,6 +35,11 @@ public class CoinFlip extends AbstractSlashCommand {
     public void onButtonInteraction(@NotNull final ButtonInteractionEvent event) {
         ResourceBundle resourceBundle = LocaleHelper.getBotResource(event.getUserLocale());
         List<String> argumentsComponent = getArgumentsComponent(event);
+
+        if (!event.getMember().getId().equals(argumentsComponent.get(1))) {
+            event.reply(resourceBundle.getString("command.coinflip.error.author")).setEphemeral(true).queue();
+            return;
+        }
 
         if ("retry".equals(argumentsComponent.get(0))) {
             event.editMessageEmbeds(getHeadOrTails(resourceBundle, event.getMember())).queue();
