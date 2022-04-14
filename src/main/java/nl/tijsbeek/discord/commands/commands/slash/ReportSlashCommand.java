@@ -35,14 +35,14 @@ public class ReportSlashCommand extends AbstractSlashCommand {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        ResourceBundle resource = LocaleHelper.getResource(event.getUserLocale(), "ReportCommand");
+        ResourceBundle resource = LocaleHelper.getBotResource(event.getUserLocale());
 
         GuildSettings guildSettings = database.getGuildSettingsDatabase().retrieveById(event.getGuild().getIdLong());
 
         MessageChannel messageChannel = event.getJDA().getChannelById(MessageChannel.class, guildSettings.getReportChannelId());
 
         if (null == messageChannel) {
-            event.reply(resource.getString("invalid.channel")).setEphemeral(true).queue();
+            event.reply(resource.getString("command.report.invalid.channel")).setEphemeral(true).queue();
             return;
         }
 
@@ -54,8 +54,8 @@ public class ReportSlashCommand extends AbstractSlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(resource.getString("report"))
-                .setDescription(resource.getString("message.slash").formatted(
+                .setTitle(resource.getString("command.report.report"))
+                .setDescription(resource.getString("command.report.message.slash").formatted(
                                 reportedUser.getAsMention(), reportedUser.getId(),
                         reporter.getAsMention(), reporter.getId(),
                         reason
@@ -64,10 +64,10 @@ public class ReportSlashCommand extends AbstractSlashCommand {
 
         messageChannel.sendMessageEmbeds(builder.build())
                         .setActionRow(List.of(
-                                DiscordClientAction.General.USER.asLinkButton(resource.getString("reporter.profile"), event.getMember().getId()),
-                                DiscordClientAction.General.USER.asLinkButton(resource.getString("reportee.profile"), reportedUser.getId())
+                                DiscordClientAction.General.USER.asLinkButton(resource.getString("command.report.reporter.profile"), event.getMember().getId()),
+                                DiscordClientAction.General.USER.asLinkButton(resource.getString("command.report.reportee.profile"), reportedUser.getId())
                         )).queue();
 
-        event.reply(resource.getString("success")).setEphemeral(true).queue();
+        event.reply(resource.getString("command.report.success")).setEphemeral(true).queue();
     }
 }
