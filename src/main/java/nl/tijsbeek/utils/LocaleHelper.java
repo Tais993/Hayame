@@ -12,7 +12,7 @@ public class LocaleHelper {
         return ResourceBundle.getBundle("i18n\\" + baseName, locale);
     }
 
-    public static ResourceBundle getSlashCommandResource(@NotNull final Locale locale) {
-        return getResource(locale, "SlashCommands");
+    public static ResourceBundle getBotResource(@NotNull final Locale locale) {
+        return getResource(locale, "bot");
     }
 }
