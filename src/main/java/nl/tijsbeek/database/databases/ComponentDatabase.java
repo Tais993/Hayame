@@ -4,6 +4,7 @@ import com.diffplug.common.base.Errors;
 import nl.tijsbeek.discord.components.ComponentEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +27,21 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     }
 
     @Override
-    public ComponentEntity retrieveById(final long id) {
+    public @Nullable ComponentEntity retrieveById(final long id) {
         return withReturn("""
                 SELECT *
-                FROM discordbot.embeds
+                FROM discordbot.component
                 WHERE id = ?
-                """, setIdStringConsumer(id), ComponentDatabase::resultSetToComponentEntity);
+                """, setIdLongConsumer(id), ComponentDatabase::resultSetToComponentEntity);
     }
 
     @Override
-    public ComponentEntity deleteById(final long id) {
+    public @Nullable ComponentEntity deleteById(final long id) {
         return withReturn("""
-                DELETE FROM discordbot.embeds
+                DELETE FROM discordbot.component
                 WHERE id = ?
                 RETURNING *
-                """, setIdStringConsumer(id), ComponentDatabase::resultSetToComponentEntity);
+                """, setIdLongConsumer(id), ComponentDatabase::resultSetToComponentEntity);
     }
 
     /**
@@ -74,7 +75,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
      *
      * @return the id of the component
      */
-    public String insertAndReturnId(final ComponentEntity componentEntity) {
+    public @Nullable String insertAndReturnId(final ComponentEntity componentEntity) {
         return withReturn("""
                 INSERT INTO discordbot.component (listener_id, command_type, expire_date, arguments)
                 VALUES (?, ?, ?, ?)
@@ -87,7 +88,6 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     @Contract("_ -> new")
     private static ComponentEntity resultSetToComponentEntity(@NotNull final ResultSet resultSet) {
         try {
-
             String id = resultSet.getString(1);
             String listenerId = resultSet.getString(2);
             int commandType = resultSet.getInt(3);
@@ -103,10 +103,10 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
 
     private static Consumer<PreparedStatement> setComponentEntity(@NotNull final ComponentEntity componentEntity) {
         return Errors.rethrow().wrap(statement -> {
-            statement.setObject(1, componentEntity.getListenerId());
-            statement.setObject(2, componentEntity.getCommandType());
+            statement.setString(1, componentEntity.getListenerId());
+            statement.setInt(2, componentEntity.getCommandType().getId());
             statement.setObject(3, componentEntity.getExpireDate());
-            statement.setObject(4, Database.argumentsToCsvString(componentEntity.getArguments()));
+            statement.setString(4, Database.argumentsToCsvString(componentEntity.getArguments()));
         });
     }
 }

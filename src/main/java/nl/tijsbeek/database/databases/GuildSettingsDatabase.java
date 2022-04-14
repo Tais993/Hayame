@@ -3,6 +3,7 @@ package nl.tijsbeek.database.databases;
 import com.diffplug.common.base.Errors;
 import nl.tijsbeek.database.tables.GuildSettings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
 
 
     @Override
-    public GuildSettings retrieveById(long id) {
+    public @Nullable GuildSettings retrieveById(long id) {
         return withReturn("""
                 SELECT *
                 FROM discordbot.guild_settings
@@ -25,7 +26,7 @@ public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
 
 
     @Override
-    public GuildSettings deleteById(long id) {
+    public @Nullable GuildSettings deleteById(long id) {
         return withReturn("""
                 DELETE FROM discordbot.guild_settings
                 WHERE guild_id = ?
@@ -68,8 +69,6 @@ public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
 
     private static @NotNull GuildSettings resultSetToGuildSettings(@NotNull final ResultSet resultSet) {
         try {
-            resultSet.first();
-
             GuildSettings guildSettings = new GuildSettings(resultSet.getLong("guild_id"));
 
             guildSettings.setReportChannelId(resultSet.getLong("reports_log_channel"));

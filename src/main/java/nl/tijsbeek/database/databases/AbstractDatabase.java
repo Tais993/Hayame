@@ -4,6 +4,7 @@ import com.diffplug.common.base.Errors;
 import nl.tijsbeek.discord.components.ComponentEntity;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -38,6 +39,8 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
      *
      * <p>This is {@link T} instead of {@link Entity} to also allow exceptions, example would be returnal of only the ID, like {@link ComponentDatabase#insertAndReturnId(ComponentEntity)} does.
      *
+     * <p><b>The {@link ResultSet} returned by the mapper has already been set on the first row!</b>
+     *
      * @param sql the SQL to prepare
      * @param argumentInserter consumer which adds arguments to the {@link PreparedStatement}
      * @param mapper maps the {@link ResultSet} to {@link T} (which is often {@link Entity})
@@ -48,6 +51,7 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
      *
      * @see #withoutReturn(String, Consumer)
      */
+    @Nullable
     protected <T> T withReturn(@Language("SQL") final String sql, final @NotNull Consumer<? super PreparedStatement> argumentInserter,
                                final @NotNull Function<? super ResultSet, T> mapper) {
         try (Connection connection = dataSource.getConnection();
@@ -57,7 +61,13 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
 
             statement.execute();
 
-            return mapper.apply(statement.getResultSet());
+            ResultSet resultSet = statement.getResultSet();
+
+            if (!resultSet.next()) {
+                return null;
+            }
+
+            return mapper.apply(resultSet);
 
         } catch (final SQLException e) {
             throw new RuntimeException(e);

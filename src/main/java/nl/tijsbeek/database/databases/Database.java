@@ -101,7 +101,11 @@ public class Database {
      */
     @NotNull
     @Unmodifiable
-    public static List<String> csvStringToArguments(@Language("csv") @NotNull final String csv) {
+    public static List<String> csvStringToArguments(@Language("csv") @Nullable final String csv) {
+        if (csv == null) {
+            return List.of();
+        }
+
         try (CSVReader reader = new CSVReader(new StringReader(csv))) {
             return List.of(reader.readNext());
         } catch (IOException | CsvValidationException e) {
@@ -109,7 +113,7 @@ public class Database {
             return Collections.emptyList();
         }
     }
-    
+
     public HikariDataSource getDataSource() {
         return dataSource;
     }
