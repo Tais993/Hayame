@@ -6,12 +6,12 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
 import nl.tijsbeek.database.databases.ComponentDatabase;
+import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
+import nl.tijsbeek.discord.components.ComponentEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 /**
@@ -105,7 +105,7 @@ public interface InteractionCommand {
     /**
      * This event triggers when a select menu with the right command ID gets triggered.
      * <br/>
-     * Component ID's should be created using {@link ComponentDatabase#createId(LocalDateTime, String...)}
+     * Component ID's should be created using {@link ComponentDatabase#insertAndReturnId(ComponentEntity)}
      *
      * @param event the {@link SelectMenuInteractionEvent}
      */
@@ -114,7 +114,7 @@ public interface InteractionCommand {
     /**
      * This event triggers when a button with the right command ID gets triggered.
      * <br/>
-     * Component ID's should be created using {@link ComponentDatabase#createId(LocalDateTime, String...)}
+     * Component ID's should be created using {@link ComponentDatabase#insertAndReturnId(ComponentEntity)}
      *
      * @param event the {@link ButtonInteractionEvent}
      */
@@ -123,7 +123,10 @@ public interface InteractionCommand {
     /**
      * This event triggers when a modal with the right command ID gets triggered.
      * <br/>
-     * Component ID's should be created using {@link ComponentDatabase#createId(LocalDateTime, String...)}
+     * Modal ID's should be created using {@link ComponentDatabase#insertAndReturnId(ComponentEntity)}
+     *
+     * <p><b>Components within a modal should not be created using {@link ComponentDatabase#insertAndReturnId(ComponentEntity)}</b>
+     * <br>Arguments can be inserted using the modal's ID, you shouldn't need arguments for components in the modal/
      *
      * @param event the {@link ModalInteractionEvent}
      */

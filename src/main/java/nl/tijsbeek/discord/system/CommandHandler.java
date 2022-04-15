@@ -26,11 +26,10 @@ import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.Modal;
-import net.dv8tion.jda.api.interactions.modals.ModalMapping;
+import nl.tijsbeek.database.databases.ComponentDatabase;
 import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.discord.commands.*;
 import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
-import nl.tijsbeek.database.databases.ComponentDatabase;
 import nl.tijsbeek.discord.components.ComponentEntity;
 import nl.tijsbeek.prometheus.Metrics;
 import nl.tijsbeek.prometheus.MetricsHandler;
@@ -306,9 +305,6 @@ public class CommandHandler extends ListenerAdapter {
             }
 
             componentDatabase.deleteById(id);
-            event.getValues().stream()
-                    .map(ModalMapping::getId)
-                    .forEach(componentDatabase::deleteById);
         });
     }
 
