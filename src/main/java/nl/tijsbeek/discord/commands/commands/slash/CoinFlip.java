@@ -36,8 +36,10 @@ public class CoinFlip extends AbstractSlashCommand {
         ResourceBundle resourceBundle = LocaleHelper.getBotResource(event.getUserLocale());
         List<String> argumentsComponent = getArgumentsComponent(event);
 
-        if (!event.getMember().getId().equals(argumentsComponent.get(1))) {
-            event.reply(resourceBundle.getString("command.coinflip.error.author")).setEphemeral(true).queue();
+        String authorId = argumentsComponent.get(1);
+
+        if (!event.getMember().getId().equals(authorId)) {
+            event.reply(resourceBundle.getString("command.coinflip.error.author").formatted(authorId)).setEphemeral(true).queue();
             return;
         }
 
