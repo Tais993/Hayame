@@ -2,9 +2,8 @@ package nl.tijsbeek.discord.system;
 
 import nl.tijsbeek.database.databases.Database;
 import nl.tijsbeek.discord.commands.InteractionCommand;
-import nl.tijsbeek.discord.commands.commands.context.message.AaaaaMCommand;
 import nl.tijsbeek.discord.commands.commands.context.message.ReportMessageCommand;
-import nl.tijsbeek.discord.commands.commands.context.user.AaaaaUCommand;
+import nl.tijsbeek.discord.commands.commands.context.user.ReportUserCommand;
 import nl.tijsbeek.discord.commands.commands.slash.*;
 import nl.tijsbeek.discord.events.CustomEventListener;
 import nl.tijsbeek.discord.events.listeners.GuildSettingsListener;
@@ -19,6 +18,7 @@ import java.util.List;
 /**
  * Contains a list of all {@link InteractionCommand InteractionCommands} and {@link CustomEventListener CustomEventListeners}.
  */
+@SuppressWarnings("OverlyCoupledMethod")
 public class ListenersList {
 
     private final List<InteractionCommand> commands;
@@ -37,14 +37,13 @@ public class ListenersList {
 
         commands.add(new TestCommand());
         commands.add(new GrrrCommand());
-        commands.add(new AaaaaMCommand());
-        commands.add(new AaaaaUCommand());
         commands.add(new AskQuestionCommand());
         commands.add(new CoinFlip());
         commands.add(new EmbedCommand());
         commands.add(new SettingsCommand());
         commands.add(new ReportSlashCommand());
         commands.add(new ReportMessageCommand());
+        commands.add(new ReportUserCommand());
 
         this.eventListeners = eventListeners;
         this.commands = commands;
