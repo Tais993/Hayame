@@ -6,6 +6,8 @@ import nl.tijsbeek.database.tables.CustomAuditLogEntry.CustomAuditLogEntryBuilde
 import nl.tijsbeek.database.tables.CustomAuditLogEntry.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,9 +16,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
+    private static final Logger logger = LoggerFactory.getLogger(AuditLogDatabase.class);
+
     protected AuditLogDatabase(@NotNull final Database database) {
         super(Objects.requireNonNull(database, "Database may not be null").getDataSource());
     }
@@ -30,32 +35,39 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
                 """, setIdLongConsumer(id), AuditLogDatabase::resultSetToAuditLogEntry);
     }
 
-    public @Nullable List<CustomAuditLogEntry> retrieveByTargetId(final long id) {
-        return withReturn("""
+    public @NotNull List<CustomAuditLogEntry> retrieveByTargetId(final long id) {
+        return Optional.ofNullable(withReturn("""
                 SELECT *
                 FROM discordbot.audit_log
                 WHERE target = ?
-                """, setIdLongConsumer(id), AuditLogDatabase::resultSetToAuditLogEntries);
+                """, setIdLongConsumer(id), AuditLogDatabase::resultSetToAuditLogEntries)).orElse(List.of());
     }
 
-    public @Nullable List<CustomAuditLogEntry> retrieveByTargetIdAndType(final long id, final Type type) {
-        return withReturn("""
+    public @NotNull List<CustomAuditLogEntry> retrieveByTargetIdAndType(final long id, final Type type) {
+        return Optional.ofNullable(withReturn("""
                 SELECT *
                 FROM discordbot.audit_log
                 WHERE target = ? AND type = ?
                 """, Errors.rethrow().wrap(preparedStatement -> {
             setIdLongConsumer(id).accept(preparedStatement);
             preparedStatement.setInt(2, type.getKey());
-        }) , AuditLogDatabase::resultSetToAuditLogEntries);
+        }) , AuditLogDatabase::resultSetToAuditLogEntries)).orElse(List.of());
     }
 
 
-    public @Nullable List<CustomAuditLogEntry> retrieveByAuthorId(final long id) {
-        return withReturn("""
+    /**
+     * Retrieves all audit log entires based on the given author's ID
+     *
+     * @param id
+     *
+     * @return
+     */
+    public @NotNull List<CustomAuditLogEntry> retrieveByAuthorId(final long id) {
+        return Optional.ofNullable(withReturn("""
                 SELECT *
                 FROM discordbot.audit_log
                 WHERE author = ?
-                """, setIdLongConsumer(id), AuditLogDatabase::resultSetToAuditLogEntries);
+                """, setIdLongConsumer(id), AuditLogDatabase::resultSetToAuditLogEntries)).orElse(List.of());
     }
 
 
@@ -117,6 +129,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
         }
     }
 
+    @NotNull
     private static List<CustomAuditLogEntry> resultSetToAuditLogEntries(@NotNull final ResultSet resultSet) {
         List<CustomAuditLogEntry> auditLogEntries = new ArrayList<>(10);
 

@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.time.Instant;
@@ -135,37 +136,37 @@ public class EmbedTemplate {
             return this;
         }
 
-        public EmbedTemplateBuilder setAuthorName(final String authorName) {
+        public EmbedTemplateBuilder setAuthorName(final @Nullable String authorName) {
             this.authorName = authorName;
             return this;
         }
 
-        public EmbedTemplateBuilder setAuthorUrl(final String authorUrl) {
+        public EmbedTemplateBuilder setAuthorUrl(final @Nullable String authorUrl) {
             this.authorUrl = authorUrl;
             return this;
         }
 
-        public EmbedTemplateBuilder setAuthorIconUrl(final String authorIconUrl) {
+        public EmbedTemplateBuilder setAuthorIconUrl(final @Nullable String authorIconUrl) {
             this.authorIconUrl = authorIconUrl;
             return this;
         }
 
-        public EmbedTemplateBuilder setColor(final Color color) {
+        public EmbedTemplateBuilder setColor(final @Nullable Color color) {
             this.color = color;
             return this;
         }
 
-        public EmbedTemplateBuilder setFooterUrl(final String footerUrl) {
+        public EmbedTemplateBuilder setFooterUrl(final @Nullable String footerUrl) {
             this.footerUrl = footerUrl;
             return this;
         }
 
-        public EmbedTemplateBuilder setImageUrl(final String imageUrl) {
+        public EmbedTemplateBuilder setImageUrl(final @Nullable String imageUrl) {
             this.imageUrl = imageUrl;
             return this;
         }
 
-        public EmbedTemplateBuilder setThumbnailUrl(final String thumbnailUrl) {
+        public EmbedTemplateBuilder setThumbnailUrl(final @Nullable String thumbnailUrl) {
             this.thumbnailUrl = thumbnailUrl;
             return this;
         }

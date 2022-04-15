@@ -59,6 +59,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
     private static final String THUMBNAIL_URL_OPTION = "thumbnail-url";
 
     private static final String WHO_TO_PING_OPTION = "to-ping";
+    private static final String TITLE_COMPONENT_ID = "title";
+    private static final String DESCRIPTION_COMPONENT_ID = "description";
+    private static final String FOOTER_TEXT_COMPONENT_ID = "footer_text";
 
     private EmbedDatabase embedDatabase;
 
@@ -102,19 +105,19 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
     private static @NotNull OptionData generateColourOption() {
         return new OptionData(OptionType.STRING, COLOUR_OPTION, "The name of the colour, overwrites %s.".formatted(CUSTOM_COLOUR_OPTION))
-                .addChoice("Black", Color.BLACK.getRGB() + "")
-                .addChoice("Blue", Color.BLUE.getRGB() + "")
-                .addChoice("Cyan", Color.CYAN.getRGB() + "")
-                .addChoice("Green", Color.GREEN.getRGB() + "")
-                .addChoice("Gray", Color.GRAY.getRGB() + "")
-                .addChoice("Dark Gray", Color.DARK_GRAY.getRGB() + "")
-                .addChoice("Light Gray", Color.LIGHT_GRAY.getRGB() + "")
-                .addChoice("Magenta", Color.MAGENTA.getRGB() + "")
-                .addChoice("Orange", Color.ORANGE.getRGB() + "")
-                .addChoice("Pink", Color.PINK.getRGB() + "")
-                .addChoice("Red", Color.RED.getRGB() + "")
-                .addChoice("White", Color.WHITE.getRGB() + "")
-                .addChoice("Yellow", Color.YELLOW.getRGB() + "");
+                .addChoice("Black", String.valueOf(Color.BLACK.getRGB()))
+                .addChoice("Blue", String.valueOf(Color.BLUE.getRGB()))
+                .addChoice("Cyan", String.valueOf(Color.CYAN.getRGB()))
+                .addChoice("Green", String.valueOf(Color.GREEN.getRGB()))
+                .addChoice("Gray", String.valueOf(Color.GRAY.getRGB()))
+                .addChoice("Dark Gray", String.valueOf(Color.DARK_GRAY.getRGB()))
+                .addChoice("Light Gray", String.valueOf(Color.LIGHT_GRAY.getRGB()))
+                .addChoice("Magenta", String.valueOf(Color.MAGENTA.getRGB()))
+                .addChoice("Orange", String.valueOf(Color.ORANGE.getRGB()))
+                .addChoice("Pink", String.valueOf(Color.PINK.getRGB()))
+                .addChoice("Red", String.valueOf(Color.RED.getRGB()))
+                .addChoice("White", String.valueOf(Color.WHITE.getRGB()))
+                .addChoice("Yellow", String.valueOf(Color.YELLOW.getRGB()));
     }
 
     @Nullable
@@ -128,7 +131,7 @@ public final class EmbedCommand extends AbstractSlashCommand {
     }
 
     @Contract("!null, _ -> !null; null, !null -> !null; null, null -> null")
-    private static String getEffectiveStringOption(final OptionMapping optionOne, final OptionMapping optionTwo) {
+    private static @Nullable String getEffectiveStringOption(final @Nullable OptionMapping optionOne, final @Nullable OptionMapping optionTwo) {
         if (null != optionOne) {
             return optionOne.getAsString();
         } else if (null != optionTwo) {
@@ -251,9 +254,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
         embedDatabase.insert(builder.createEmbedTemplate());
 
         Modal modal = Modal.create(id, "Embed content")
-                .addActionRow(TextInput.create(generateId("title"), locale.getString("command.embed.modal.title"), TextInputStyle.SHORT).setRequired(true).build())
-                .addActionRow(TextInput.create(generateId("description"), locale.getString("command.embed.modal.description"), TextInputStyle.PARAGRAPH).setMaxLength(4000).build())
-                .addActionRow(TextInput.create(generateId("footer_text"), locale.getString("command.embed.modal.footer"), TextInputStyle.PARAGRAPH).setMaxLength(2048).build())
+                .addActionRow(TextInput.create(TITLE_COMPONENT_ID, locale.getString("command.embed.modal.title"), TextInputStyle.SHORT).setRequired(true).build())
+                .addActionRow(TextInput.create(DESCRIPTION_COMPONENT_ID, locale.getString("command.embed.modal.description"), TextInputStyle.PARAGRAPH).setMaxLength(4000).build())
+                .addActionRow(TextInput.create(FOOTER_TEXT_COMPONENT_ID, locale.getString("command.embed.modal.footer"), TextInputStyle.PARAGRAPH).setMaxLength(2048).build())
                 .build();
 
         event.replyModal(modal).queue();
@@ -297,9 +300,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
             String content = modalMapping.getAsString();
 
             switch (type) {
-                case "title" -> builder.setTitle(content);
-                case "description" -> builder.setDescription(content);
-                case "footer_text" -> builder.setFooter(content, embedTemplate.getFooterUrl());
+                case TITLE_COMPONENT_ID -> builder.setTitle(content);
+                case DESCRIPTION_COMPONENT_ID -> builder.setDescription(content);
+                case FOOTER_TEXT_COMPONENT_ID -> builder.setFooter(content, embedTemplate.getFooterUrl());
             }
         });
 

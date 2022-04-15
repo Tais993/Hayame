@@ -22,10 +22,10 @@ import java.util.stream.IntStream;
 
 /**
  * An abstraction of {@link SlashCommand} with the intention to improve developer experience.
- * <p/>
+ * <p>
  * This implements methods like {@link #getData()}, {@link #getVisibility()} and {@link #getState()} for you. Their values are
  * inserted within the constructor.
- * <p/>
+ * <p>
  * Methods like {@link #addEnabledGuilds(Long...)}, {@link #addRequiredBotPermission(Permission...)} and {@link #addRequiredUserPermission(Permission...)} exist to improve the experience.
  */
 public abstract class AbstractSlashCommand extends AbstractInteractionCommand implements SlashCommand {

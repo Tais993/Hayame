@@ -3,6 +3,9 @@ package nl.tijsbeek.utils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Has some helper methods for dealing with Discord mentions.
+ */
 public class MentionUtils {
 
     /**

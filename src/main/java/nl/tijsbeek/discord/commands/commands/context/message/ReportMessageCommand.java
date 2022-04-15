@@ -24,6 +24,10 @@ import static nl.tijsbeek.discord.commands.commands.slash.ReportSlashCommand.han
 import static nl.tijsbeek.utils.MentionUtils.mentionUserById;
 
 public class ReportMessageCommand extends AbstractInteractionCommand implements MessageContextCommand {
+
+    private static final String REASON_COMPONENT_ID = "reason";
+    private static final String ATTACHMENT_COMPONENT_ID = "attachments";
+
     public ReportMessageCommand() {
         super(Commands.message("report"), InteractionCommandVisibility.GUILD_ONLY);
     }
@@ -53,8 +57,8 @@ public class ReportMessageCommand extends AbstractInteractionCommand implements 
 
 
         Modal modal = Modal.create(customId, "Report")
-                .addActionRow(TextInput.create("reason", "reason", TextInputStyle.SHORT).build())
-                .addActionRow(TextInput.create("attachments", "attachment URL's", TextInputStyle.SHORT).build())
+                .addActionRow(TextInput.create(REASON_COMPONENT_ID, "reason", TextInputStyle.SHORT).build())
+                .addActionRow(TextInput.create(ATTACHMENT_COMPONENT_ID, "attachment URL's", TextInputStyle.SHORT).build())
                 .build();
 
 
@@ -88,8 +92,8 @@ public class ReportMessageCommand extends AbstractInteractionCommand implements 
                 .setDescription(resource.getString("command.report.message").formatted(
                         mentionUserById(reporteeId), reporteeId,
                         mentionUserById(reporterId), reporterId,
-                        event.getValue("attachments").getAsString(),
-                        event.getValue("reason").getAsString()
+                        event.getValue(ATTACHMENT_COMPONENT_ID).getAsString(),
+                        event.getValue(REASON_COMPONENT_ID).getAsString()
                 ));
 
         String messageUrl = "https://discord.com/channels/%s/%s/%s".formatted(targetGuildId, targetChannelId, targetMessageId);

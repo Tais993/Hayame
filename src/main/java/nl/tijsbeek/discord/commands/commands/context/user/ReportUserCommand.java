@@ -23,6 +23,10 @@ import static nl.tijsbeek.discord.commands.commands.slash.ReportSlashCommand.han
 import static nl.tijsbeek.utils.MentionUtils.mentionUserById;
 
 public class ReportUserCommand extends AbstractInteractionCommand implements UserContextCommand {
+
+    private static final String ATTACHMENT_COMPONENT_ID = "attachments";
+    private static final String REASON_COMPONENT_ID = "reason";
+
     public ReportUserCommand() {
         super(Commands.user("report"), InteractionCommandVisibility.GUILD_ONLY);
     }
@@ -46,8 +50,8 @@ public class ReportUserCommand extends AbstractInteractionCommand implements Use
 
 
         Modal modal = Modal.create(customId, "Report")
-                .addActionRow(TextInput.create("reason", "reason", TextInputStyle.SHORT).build())
-                .addActionRow(TextInput.create("attachments", "attachment URL's", TextInputStyle.SHORT).build())
+                .addActionRow(TextInput.create(REASON_COMPONENT_ID, "reason", TextInputStyle.SHORT).build())
+                .addActionRow(TextInput.create(ATTACHMENT_COMPONENT_ID, "attachment URL's", TextInputStyle.SHORT).build())
                 .build();
 
 
@@ -77,8 +81,8 @@ public class ReportUserCommand extends AbstractInteractionCommand implements Use
                 .setDescription(resource.getString("command.report.message").formatted(
                         mentionUserById(reporteeId), reporteeId,
                         mentionUserById(reporterId), reporterId,
-                        event.getValue("attachments").getAsString(),
-                        event.getValue("reason").getAsString()
+                        event.getValue(ATTACHMENT_COMPONENT_ID).getAsString(),
+                        event.getValue(REASON_COMPONENT_ID).getAsString()
                 ));
 
 
