@@ -88,10 +88,12 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     @Contract("_ -> new")
     private static ComponentEntity resultSetToComponentEntity(@NotNull final ResultSet resultSet) {
         try {
-            String id = resultSet.getString(1);
-            String listenerId = resultSet.getString(2);
-            LocalDateTime expireDate = resultSet.getObject(4, LocalDateTime.class);
-            List<String> arguments = Database.csvStringToArguments(resultSet.getString(5));
+            int index = 1;
+
+            String id = resultSet.getString(index++);
+            String listenerId = resultSet.getString(index++);
+            LocalDateTime expireDate = resultSet.getObject(index++, LocalDateTime.class);
+            List<String> arguments = Database.csvStringToArguments(resultSet.getString(index++));
 
             return new ComponentEntity(id, listenerId, expireDate, arguments);
 

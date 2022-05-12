@@ -248,7 +248,7 @@ public class CommandHandler extends ListenerAdapter {
         String commandId = componentEntity.getListenerId();
 
         int type = Integer.parseInt(commandId.split("-")[0]);
-        String commandName = commandId.substring(commandId.indexOf('-'));
+        String commandName = commandId.substring(commandId.indexOf('-') + 1);
 
         return switch (type) {
             case 1 -> nameToSlashCommandCommand.get(commandName);
