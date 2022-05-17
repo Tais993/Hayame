@@ -74,10 +74,10 @@ test {
 
 
 flyway {
-    def configLocation = System.getenv('hamaye.config.location')
+    final String configLocation = System.getenv('hamaye.config.location')
 
-    def jsonFile = file(configLocation)
-    def parsedJson = new JsonSlurper().parseText(jsonFile.text)
+    final File jsonFile = file(configLocation)
+    final def parsedJson = new JsonSlurper().parseText(jsonFile.text)
 
     url = 'jdbc:mariadb://localhost:' + parsedJson.database_port
     user = parsedJson.database_username
