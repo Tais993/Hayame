@@ -295,11 +295,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
 
 
         event.getValues().forEach((ModalMapping modalMapping) -> {
-            @NonNls String type = getArgumentsComponent(modalMapping.getId()).get(0);
-
             String content = modalMapping.getAsString();
 
-            switch (type) {
+            switch (modalMapping.getId()) {
                 case TITLE_COMPONENT_ID -> builder.setTitle(content);
                 case DESCRIPTION_COMPONENT_ID -> builder.setDescription(content);
                 case FOOTER_TEXT_COMPONENT_ID -> builder.setFooter(content, embedTemplate.getFooterUrl());

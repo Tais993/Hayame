@@ -1,2 +1,0 @@
-ALTER TABLE embeds
-    MODIFY timestamp BOOLEAN NULL;

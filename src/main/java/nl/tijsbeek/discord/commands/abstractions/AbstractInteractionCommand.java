@@ -159,7 +159,7 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
      * @see #generateId(String...)
      */
     public @NotNull String generateId(@Nullable final LocalDateTime expirationDate, @NotNull final String... arguments) {
-        return Objects.requireNonNull(componentDatabase.insertAndReturnId(new ComponentEntity(getName(), getType().getId(), expirationDate, List.of(arguments))));
+        return Objects.requireNonNull(componentDatabase.insertAndReturnId(new ComponentEntity(getType().getId() + "-" + getName(), expirationDate, List.of(arguments))));
     }
 
     /**

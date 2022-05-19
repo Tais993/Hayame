@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.CommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
@@ -221,33 +220,40 @@ public class CommandHandler extends ListenerAdapter {
 
             ComponentEntity componentEntity = componentDatabase.retrieveById(id);
 
-            String effectiveListenerId = (componentEntity.getListenerId() == null) ? "" : componentEntity.getListenerId();
-            Metrics.GENERIC_COMPONENTS.labels("selectmenu", effectiveListenerId).inc();
-
+            String listenerId = getCommandNameByComponentEntity(componentEntity);
+            Metrics.GENERIC_COMPONENTS.labels("selectmenu", listenerId).inc();
             if (componentEntity.isExpired()) {
                 expireComponentsMessage(event);
             } else {
                 InteractionCommand command = commandByNameAndType(componentEntity);
 
-                Metrics.GENERIC_COMPONENT_INVOCATION_DURATION.labels("selectmenu", effectiveListenerId).time(() -> {
+                Metrics.GENERIC_COMPONENT_INVOCATION_DURATION.labels("selectmenu", listenerId).time(() -> {
                     command.onSelectMenuInteraction(event);
                 });
             }
         });
     }
 
-    private InteractionCommand commandByNameAndType(@NotNull final ComponentEntity componentEntity) {
-        String commandName = componentEntity.getListenerId();
-        Command.Type type = componentEntity.getCommandType();
+    private static @NotNull String getCommandNameByComponentEntity(@NotNull final ComponentEntity componentEntity) {
+        String commandId = componentEntity.getListenerId();
 
-        if (type == null) {
-            throw new IllegalArgumentException("The type of the component should NEVER be null!");
+        if (null == commandId || commandId.isBlank() || !commandId.contains("-")) {
+            return "";
         }
 
+        return commandId.substring(commandId.indexOf('-'));
+    }
+
+    private InteractionCommand commandByNameAndType(@NotNull final ComponentEntity componentEntity) {
+        String commandId = componentEntity.getListenerId();
+
+        int type = Integer.parseInt(commandId.split("-")[0]);
+        String commandName = commandId.substring(commandId.indexOf('-') + 1);
+
         return switch (type) {
-            case SLASH -> nameToSlashCommandCommand.get(commandName);
-            case MESSAGE -> nameToMessageContextCommand.get(commandName);
-            case USER -> nameToUserContextCommand.get(commandName);
+            case 1 -> nameToSlashCommandCommand.get(commandName);
+            case 2 -> nameToMessageContextCommand.get(commandName);
+            case 3 -> nameToUserContextCommand.get(commandName);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
@@ -264,7 +270,7 @@ public class CommandHandler extends ListenerAdapter {
 
             ComponentEntity componentEntity = componentDatabase.retrieveById(id);
 
-            String effectiveListenerId = (componentEntity.getListenerId() == null) ? "" : componentEntity.getListenerId();
+            String effectiveListenerId = getCommandNameByComponentEntity(componentEntity);
             Metrics.GENERIC_COMPONENTS.labels("button", effectiveListenerId).inc();
 
             if (componentEntity.isExpired()) {
@@ -293,7 +299,7 @@ public class CommandHandler extends ListenerAdapter {
 
             ComponentEntity componentEntity = componentDatabase.retrieveById(id);
 
-            String effectiveListenerId = (componentEntity.getListenerId() == null) ? "" : componentEntity.getListenerId();
+            String effectiveListenerId = getCommandNameByComponentEntity(componentEntity);
             Metrics.GENERIC_MODALS.labels(effectiveListenerId).inc();
 
             InteractionCommand command = commandByNameAndType(componentEntity);

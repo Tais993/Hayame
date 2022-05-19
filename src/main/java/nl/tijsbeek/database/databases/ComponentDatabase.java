@@ -55,16 +55,16 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     @Override
     public void insert(final @NotNull ComponentEntity componentEntity) {
         withoutReturn("""
-                INSERT INTO discordbot.component (listener_id, command_type, expire_date, arguments)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO discordbot.component (listener_id, expire_date, arguments)
+                VALUES (?, ?, ?)
                 """, setComponentEntity(componentEntity));
     }
 
     @Override
     public void replace(@NotNull final ComponentEntity componentEntity) {
         withoutReturn("""
-                REPLACE INTO discordbot.component (listener_id, command_type, expire_date, arguments)
-                VALUES (?, ?, ?, ?)
+                REPLACE INTO discordbot.component (listener_id, expire_date, arguments)
+                VALUES (?, ?, ?)
                 """, setComponentEntity(componentEntity));
     }
 
@@ -77,8 +77,8 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
      */
     public @Nullable String insertAndReturnId(final ComponentEntity componentEntity) {
         return withReturn("""
-                INSERT INTO discordbot.component (listener_id, command_type, expire_date, arguments)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO discordbot.component (listener_id, expire_date, arguments)
+                VALUES (?, ?, ?)
                 RETURNING id
                 """, setComponentEntity(componentEntity),
                 Errors.rethrow().wrap((ResultSet resultSet) -> resultSet.getString(1)));
@@ -88,13 +88,14 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     @Contract("_ -> new")
     private static ComponentEntity resultSetToComponentEntity(@NotNull final ResultSet resultSet) {
         try {
-            String id = resultSet.getString(1);
-            String listenerId = resultSet.getString(2);
-            int commandType = resultSet.getInt(3);
-            LocalDateTime expireDate = resultSet.getObject(4, LocalDateTime.class);
-            List<String> arguments = Database.csvStringToArguments(resultSet.getString(5));
+            int index = 1;
 
-            return new ComponentEntity(id, listenerId, commandType, expireDate, arguments);
+            String id = resultSet.getString(index++);
+            String listenerId = resultSet.getString(index++);
+            LocalDateTime expireDate = resultSet.getObject(index++, LocalDateTime.class);
+            List<String> arguments = Database.csvStringToArguments(resultSet.getString(index++));
+
+            return new ComponentEntity(id, listenerId, expireDate, arguments);
 
         } catch (final SQLException e) {
             throw new RuntimeException(e);
@@ -104,9 +105,8 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     private static Consumer<PreparedStatement> setComponentEntity(@NotNull final ComponentEntity componentEntity) {
         return Errors.rethrow().wrap(statement -> {
             statement.setString(1, componentEntity.getListenerId());
-            statement.setInt(2, componentEntity.getCommandType().getId());
-            statement.setObject(3, componentEntity.getExpireDate());
-            statement.setString(4, Database.argumentsToCsvString(componentEntity.getArguments()));
+            statement.setObject(2, componentEntity.getExpireDate());
+            statement.setString(3, Database.argumentsToCsvString(componentEntity.getArguments()));
         });
     }
 }

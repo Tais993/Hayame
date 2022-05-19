@@ -51,7 +51,7 @@ public class Database {
                 Flyway.configure()
                         .schemas(DB_SCHEMA_BOT)
                         .dataSource(dataSource)
-                        .locations("classpath:/db/").load();
+                        .locations("classpath:/db/migration").load();
         flyway.migrate();
 
 
