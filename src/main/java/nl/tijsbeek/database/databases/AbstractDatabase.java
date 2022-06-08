@@ -43,7 +43,7 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
      *
      * @param sql the SQL to prepare
      * @param argumentInserter consumer which adds arguments to the {@link PreparedStatement}
-     * @param mapper maps the {@link ResultSet} to {@link T} (which is often {@link Entity})
+     * @param mapper maps the given {@link ResultSet} (set to the first row) to {@link T} (which is often {@link Entity})
      *
      * @return {@link T} to return
      *
@@ -59,11 +59,11 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
 
             argumentInserter.accept(statement);
 
-            statement.execute();
+            statement.executeBatch();
 
             ResultSet resultSet = statement.getResultSet();
 
-            if (!resultSet.next()) {
+            if (!resultSet.first()) {
                 return null;
             }
 
@@ -91,7 +91,7 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
 
             argumentInserter.accept(statement);
 
-            statement.execute();
+            statement.executeBatch();
 
         } catch (final SQLException e) {
             throw new RuntimeException(e);
