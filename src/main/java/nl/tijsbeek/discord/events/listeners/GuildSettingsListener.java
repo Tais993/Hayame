@@ -2,7 +2,7 @@ package nl.tijsbeek.discord.events.listeners;
 
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import nl.tijsbeek.database.databases.GuildSettingsDatabase;
 import nl.tijsbeek.database.tables.GuildSettings;
 import nl.tijsbeek.discord.events.AbstractEventListener;
@@ -12,8 +12,8 @@ public class GuildSettingsListener extends AbstractEventListener {
 
     private final GuildSettingsDatabase database;
 
-    public GuildSettingsListener(@NotNull final Database database) {
-        this.database = database.getGuildSettingsDatabase();
+    public GuildSettingsListener(@NotNull final Databases databases) {
+        this.database = databases.getGuildSettingsDatabase();
     }
 
     @Override

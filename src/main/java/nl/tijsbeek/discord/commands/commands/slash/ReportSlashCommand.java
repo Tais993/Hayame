@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import nl.tijsbeek.database.tables.GuildSettings;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
 import nl.tijsbeek.discord.commands.abstractions.AbstractSlashCommand;
@@ -46,7 +46,7 @@ public class ReportSlashCommand extends AbstractSlashCommand {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         ResourceBundle resource = LocaleHelper.getBotResource(event.getUserLocale());
 
-        MessageChannel messageChannel = handleReportLogChannel(database, event);
+        MessageChannel messageChannel = handleReportLogChannel(databases, event);
 
         if (messageChannel == null) {
             return;
@@ -95,13 +95,13 @@ public class ReportSlashCommand extends AbstractSlashCommand {
     /**
      * Check or the log channel has been set for reports, if unset it handels the event and returns null.
      *
-     * @param database the {@link Database} of the bot
+     * @param databases the {@link Databases} of the bot
      * @param event the {@link IReplyCallback} to reply to on failure
      *
      * @return null or a {@link MessageChannel} to log report to.
      */
-    public static @Nullable MessageChannel handleReportLogChannel(@NotNull Database database, @NotNull final IReplyCallback event) {
-        GuildSettings guildSettings = database.getGuildSettingsDatabase().retrieveById(event.getGuild().getIdLong());
+    public static @Nullable MessageChannel handleReportLogChannel(@NotNull Databases databases, @NotNull final IReplyCallback event) {
+        GuildSettings guildSettings = databases.getGuildSettingsDatabase().retrieveById(event.getGuild().getIdLong());
         ResourceBundle resource = LocaleHelper.getBotResource(event.getUserLocale());
 
         MessageChannel messageChannel = event.getJDA().getChannelById(MessageChannel.class, guildSettings.getReportChannelId());

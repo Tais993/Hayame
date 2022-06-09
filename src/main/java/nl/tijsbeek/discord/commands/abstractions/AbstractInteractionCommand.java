@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.InteractionCommandState;
 import nl.tijsbeek.discord.commands.InteractionCommandVisibility;
@@ -27,7 +27,7 @@ import java.util.*;
  * Methods like {@link #addEnabledGuilds(Long...)}, {@link #addRequiredBotPermission(Permission...)} and {@link #addRequiredUserPermission(Permission...)} exist to improve the experience.
  */
 public abstract class AbstractInteractionCommand implements InteractionCommand {
-    protected Database database;
+    protected Databases databases;
     private ComponentDatabase componentDatabase;
 
     private final CommandData data;
@@ -49,9 +49,9 @@ public abstract class AbstractInteractionCommand implements InteractionCommand {
         this.state = state;
     }
 
-    public void setDatabase(final Database database) {
-        this.database = database;
-        this.componentDatabase = database.getComponentDatabase();
+    public void setDatabase(final Databases databases) {
+        this.databases = databases;
+        this.componentDatabase = databases.getComponentDatabase();
     }
 
     /**

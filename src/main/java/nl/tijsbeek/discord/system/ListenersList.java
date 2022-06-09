@@ -1,6 +1,6 @@
 package nl.tijsbeek.discord.system;
 
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import nl.tijsbeek.discord.commands.InteractionCommand;
 import nl.tijsbeek.discord.commands.commands.context.message.ReportMessageCommand;
 import nl.tijsbeek.discord.commands.commands.context.user.ReportUserCommand;
@@ -27,10 +27,10 @@ public class ListenersList {
     /**
      * Creates an instance.
      */
-    public ListenersList(@NotNull final Database database) {
+    public ListenersList(@NotNull final Databases databases) {
         List<CustomEventListener> eventListeners = new ArrayList<>(20);
 
-        eventListeners.add(new GuildSettingsListener(database));
+        eventListeners.add(new GuildSettingsListener(databases));
 
 
         List<InteractionCommand> commands = new ArrayList<>(20);

@@ -10,8 +10,8 @@ import java.sql.SQLException;
 
 public class GuildSettingsDatabase extends AbstractDatabase<GuildSettings> {
 
-    GuildSettingsDatabase(final @NotNull Database database) {
-        super(database.getDataSource());
+    GuildSettingsDatabase(final @NotNull Databases databases) {
+        super(databases.getDataSource());
     }
 
 

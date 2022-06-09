@@ -18,13 +18,13 @@ import java.util.function.Consumer;
 public class UserProfileDatabase extends AbstractDatabase<UserProfile> implements IStringDatabase<UserProfile> {
     private static final Logger logger = LoggerFactory.getLogger(UserProfileDatabase.class);
 
-    private final Database database;
+    private final Databases databases;
 
     @Contract(pure = true)
-    UserProfileDatabase(@NotNull final Database database) {
-        super(database.getDataSource());
+    UserProfileDatabase(@NotNull final Databases databases) {
+        super(databases.getDataSource());
 
-        this.database = database;
+        this.databases = databases;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class UserProfileDatabase extends AbstractDatabase<UserProfile> implement
                     false
             ));
 
-            return new UserProfile(database, resultSet.getLong("id"))
+            return new UserProfile(databases, resultSet.getLong("id"))
                     .setDescription(resultSet.getString("description"))
                     .setFields(fields);
         }).apply(resultSetParam);

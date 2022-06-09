@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import nl.tijsbeek.config.Config;
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import nl.tijsbeek.discord.system.CommandHandler;
 import nl.tijsbeek.discord.system.EventHandler;
 import nl.tijsbeek.discord.system.ListenersList;
@@ -50,11 +50,11 @@ public final class Application {
 
         Config config = Config.loadInstance(configLocation);
 
-        Database database = new Database(config);
+        Databases databases = new Databases(config);
 
-        ListenersList listenersList = new ListenersList(database);
+        ListenersList listenersList = new ListenersList(databases);
 
-        CommandHandler commandHandler = new CommandHandler(database, listenersList);
+        CommandHandler commandHandler = new CommandHandler(databases, listenersList);
         EventHandler eventHandler = new EventHandler(listenersList);
 
         MetricsHandler matricsHandler = new MetricsHandler(commandHandler, config);

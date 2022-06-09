@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.interactions.components.*;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import nl.tijsbeek.database.databases.ComponentDatabase;
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import nl.tijsbeek.discord.commands.*;
 import nl.tijsbeek.discord.commands.abstractions.AbstractInteractionCommand;
 import nl.tijsbeek.discord.components.ComponentEntity;
@@ -73,16 +73,16 @@ public class CommandHandler extends ListenerAdapter {
     /**
      * Creates an instance based of {@link ListenersList#getCommands()}.
      *
-     * @param database      the {@link Database}
+     * @param databases      the {@link Databases}
      * @param listenersList the {@link ListenersList} which contains all commands
      */
-    public CommandHandler(@NotNull final Database database, @NotNull final ListenersList listenersList) {
-        componentDatabase = database.getComponentDatabase();
+    public CommandHandler(@NotNull final Databases databases, @NotNull final ListenersList listenersList) {
+        componentDatabase = databases.getComponentDatabase();
 
         commands = listenersList.getCommands().stream()
                 .peek(command -> {
                     if (command instanceof AbstractInteractionCommand abstractCommand) {
-                        abstractCommand.setDatabase(database);
+                        abstractCommand.setDatabase(databases);
                     }
                 }).toList();
 

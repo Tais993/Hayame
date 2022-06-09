@@ -17,8 +17,8 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
     private static final Logger logger = LoggerFactory.getLogger(EmbedDatabase.class);
 
     @Contract(pure = true)
-    EmbedDatabase(@NotNull final Database database) {
-        super(database.getDataSource());
+    EmbedDatabase(@NotNull final Databases databases) {
+        super(databases.getDataSource());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
             statement.setString(7, embedTemplate.getFooterUrl());
             statement.setString(8, embedTemplate.getImageUrl());
             statement.setString(9, embedTemplate.getThumbnailUrl());
-            statement.setString(10, Database.argumentsToCsvString(embedTemplate.getMentions()));
+            statement.setString(10, Databases.argumentsToCsvString(embedTemplate.getMentions()));
         });
     }
 
@@ -85,7 +85,7 @@ public class EmbedDatabase extends AbstractDatabase<EmbedTemplate> implements IS
             builder.setFooterUrl(resultSet.getString(7));
             builder.setImageUrl(resultSet.getString(8));
             builder.setThumbnailUrl(resultSet.getString(9));
-            builder.setMentions(Database.csvStringToArguments(resultSet.getString(10)));
+            builder.setMentions(Databases.csvStringToArguments(resultSet.getString(10)));
 
             return builder.createEmbedTemplate();
         } catch (final SQLException e) {

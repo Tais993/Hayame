@@ -1,7 +1,7 @@
 package nl.tijsbeek.database.tables;
 
 import net.dv8tion.jda.api.entities.MessageEmbed.Field;
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class UserProfile {
-    private final Database database;
+    private final Databases databases;
 
     private final long userId;
 
@@ -18,8 +18,8 @@ public class UserProfile {
     private List<Field> fields = Collections.emptyList();
 
     @Contract(pure = true)
-    public UserProfile(final Database database, final long userId) {
-        this.database = database;
+    public UserProfile(final Databases databases, final long userId) {
+        this.databases = databases;
         this.userId = userId;
     }
 
@@ -51,10 +51,10 @@ public class UserProfile {
     }
 
     public @NotNull List<UserSocial> retrieveSocials() {
-        return database.getUserSocialDatabase().retrieveById(userId);
+        return databases.getUserSocialDatabase().retrieveById(userId);
     }
 
     public void replaceSocials(@NotNull final List<@NotNull UserSocial> socials) {
-        database.getUserSocialDatabase().replace(socials);
+        databases.getUserSocialDatabase().replace(socials);
     }
 }

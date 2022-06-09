@@ -1,6 +1,6 @@
 package nl.tijsbeek.unit.database;
 
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DatabaseTest {
+class DatabasesTest {
 
     @Test
     @DisplayName("Arguments to CSV string")
@@ -17,7 +17,7 @@ class DatabaseTest {
         String[] arguments = {"test", "argument2"};
         @Language("csv") String argumentsAsCsv = "\"test\",\"argument2\"\n";
 
-        assertEquals(argumentsAsCsv, Database.argumentsToCsvString(arguments));
+        assertEquals(argumentsAsCsv, Databases.argumentsToCsvString(arguments));
     }
 
     @Test
@@ -26,6 +26,6 @@ class DatabaseTest {
         List<String> arguments = List.of("test", "argument2");
         String argumentsAsCsv = "\"test\", \"argument2\"";
 
-        assertEquals(arguments, Database.csvStringToArguments(argumentsAsCsv));
+        assertEquals(arguments, Databases.csvStringToArguments(argumentsAsCsv));
     }
 }

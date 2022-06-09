@@ -59,7 +59,7 @@ public final class SettingsCommand extends AbstractSlashCommand {
     @Contract(pure = true)
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
 
-        GuildSettings guildSettings = database.getGuildSettingsDatabase().retrieveById(event.getGuild().getIdLong());
+        GuildSettings guildSettings = databases.getGuildSettingsDatabase().retrieveById(event.getGuild().getIdLong());
 
         switch (event.getSubcommandGroup()) {
             case GET_COMMAND_GROUP -> getSubCommand(event, guildSettings);
@@ -93,7 +93,7 @@ public final class SettingsCommand extends AbstractSlashCommand {
                 .setDescription(resource.getString("command.settings.set.description").formatted(newValue));
 
 
-        database.getGuildSettingsDatabase().replace(guildSettings);
+        databases.getGuildSettingsDatabase().replace(guildSettings);
 
         event.replyEmbeds(builder.build()).queue();
     }
@@ -118,7 +118,7 @@ public final class SettingsCommand extends AbstractSlashCommand {
                 .setDescription(resource.getString("command.settings.get.description").formatted(value));
 
 
-        database.getGuildSettingsDatabase().replace(guildSettings);
+        databases.getGuildSettingsDatabase().replace(guildSettings);
 
         event.replyEmbeds(builder.build()).queue();
     }

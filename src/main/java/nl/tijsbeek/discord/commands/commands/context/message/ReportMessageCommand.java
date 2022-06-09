@@ -36,7 +36,7 @@ public class ReportMessageCommand extends AbstractInteractionCommand implements 
     public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event) {
         ResourceBundle resource = LocaleHelper.getBotResource(event.getUserLocale());
 
-        MessageChannel messageChannel = handleReportLogChannel(database, event);
+        MessageChannel messageChannel = handleReportLogChannel(databases, event);
 
         if (messageChannel == null) {
             return;
@@ -69,7 +69,7 @@ public class ReportMessageCommand extends AbstractInteractionCommand implements 
     public void onModalInteraction(@NotNull final ModalInteractionEvent event) {
         ResourceBundle resource = LocaleHelper.getBotResource(event.getUserLocale());
 
-        MessageChannel messageChannel = handleReportLogChannel(database, event);
+        MessageChannel messageChannel = handleReportLogChannel(databases, event);
 
         if (messageChannel == null) {
             return;

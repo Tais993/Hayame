@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
-import nl.tijsbeek.database.databases.Database;
+import nl.tijsbeek.database.databases.Databases;
 import nl.tijsbeek.database.databases.EmbedDatabase;
 import nl.tijsbeek.database.tables.EmbedTemplate;
 import nl.tijsbeek.database.tables.EmbedTemplate.EmbedTemplateBuilder;
@@ -25,7 +25,6 @@ import nl.tijsbeek.discord.commands.abstractions.AbstractSlashCommand;
 import nl.tijsbeek.utils.LocaleHelper;
 import nl.tijsbeek.utils.StreamUtils;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -98,9 +97,9 @@ public final class EmbedCommand extends AbstractSlashCommand {
     }
 
     @Override
-    public void setDatabase(final Database database) {
-        super.setDatabase(database);
-        this.embedDatabase = database.getEmbedDatabase();
+    public void setDatabase(final Databases databases) {
+        super.setDatabase(databases);
+        this.embedDatabase = databases.getEmbedDatabase();
     }
 
     private static @NotNull OptionData generateColourOption() {

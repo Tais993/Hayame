@@ -7,7 +7,6 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
-import nl.tijsbeek.database.tables.UserProfile;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NonNls;
@@ -29,8 +28,8 @@ import java.util.List;
  *
  * This class is also responsible for DB migration at the moment of speaking, this will be moved to Gradle eventually.
  */
-public class Database {
-    private static final Logger logger = LoggerFactory.getLogger(Database.class);
+public class Databases {
+    private static final Logger logger = LoggerFactory.getLogger(Databases.class);
     private static final String DB_SCHEMA_BOT = "discordbot";
 
     private final HikariDataSource dataSource;
@@ -41,7 +40,7 @@ public class Database {
     private final UserSocialDatabase userSocialDatabase;
     private final UserProfileDatabase userProfileDatabase;
 
-    public Database(@NotNull final Config config) {
+    public Databases(@NotNull final Config config) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mariadb://localhost:%s/".formatted(config.getDatabasePort()));
         hikariConfig.setUsername(config.getDatabaseUsername());

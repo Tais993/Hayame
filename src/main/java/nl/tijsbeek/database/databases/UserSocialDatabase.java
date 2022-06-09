@@ -2,7 +2,6 @@ package nl.tijsbeek.database.databases;
 
 import com.diffplug.common.base.Errors;
 import nl.tijsbeek.database.tables.UserSocial;
-import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -20,8 +19,8 @@ public class UserSocialDatabase extends AbstractDatabase<List<UserSocial>> imple
     private static final Logger logger = LoggerFactory.getLogger(UserSocialDatabase.class);
 
     @Contract(pure = true)
-    UserSocialDatabase(@NotNull final Database database) {
-        super(database.getDataSource());
+    UserSocialDatabase(@NotNull final Databases databases) {
+        super(databases.getDataSource());
     }
 
     @Override

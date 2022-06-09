@@ -22,8 +22,8 @@ import java.util.function.Consumer;
 public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
     private static final Logger logger = LoggerFactory.getLogger(AuditLogDatabase.class);
 
-    protected AuditLogDatabase(@NotNull final Database database) {
-        super(Objects.requireNonNull(database, "Database may not be null").getDataSource());
+    protected AuditLogDatabase(@NotNull final Databases databases) {
+        super(Objects.requireNonNull(databases, "Database may not be null").getDataSource());
     }
 
     @Override
@@ -106,7 +106,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
             preparedStatement.setInt(i++, customAuditLogEntry.type().getKey());
             preparedStatement.setTimestamp(i++, Timestamp.from(customAuditLogEntry.expireTime()));
             preparedStatement.setTimestamp(i++, Timestamp.from(customAuditLogEntry.creationTime()));
-            preparedStatement.setString(i++, Database.argumentsToCsvString(customAuditLogEntry.attachmentUrls()));
+            preparedStatement.setString(i++, Databases.argumentsToCsvString(customAuditLogEntry.attachmentUrls()));
         });
     }
 
@@ -121,7 +121,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
                     .setType(Type.byKey(resultSet.getInt("type")))
                     .setExpireTime(resultSet.getTimestamp("expire_time"))
                     .setCreationTime(resultSet.getTimestamp("creation_time"))
-                    .setAttachmentUrls(Database.csvStringToArguments(resultSet.getString("attachment_urls")))
+                    .setAttachmentUrls(Databases.csvStringToArguments(resultSet.getString("attachment_urls")))
                     .createAuditLogEntry();
 
         } catch (final SQLException e) {
@@ -144,7 +144,7 @@ public class AuditLogDatabase extends AbstractDatabase<CustomAuditLogEntry> {
                                 .setType(Type.byKey(resultSet.getInt("type")))
                                 .setExpireTime(resultSet.getTimestamp("expire_time"))
                                 .setCreationTime(resultSet.getTimestamp("creation_time"))
-                                .setAttachmentUrls(Database.csvStringToArguments(resultSet.getString("attachment_urls")))
+                                .setAttachmentUrls(Databases.csvStringToArguments(resultSet.getString("attachment_urls")))
                                 .createAuditLogEntry()
                 );
             }

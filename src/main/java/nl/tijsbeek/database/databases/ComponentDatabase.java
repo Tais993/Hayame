@@ -22,8 +22,8 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
     private static final Logger logger = LoggerFactory.getLogger(ComponentDatabase.class);
 
     @Contract(pure = true)
-    ComponentDatabase(@NotNull final Database database) {
-        super(database.getDataSource());
+    ComponentDatabase(@NotNull final Databases databases) {
+        super(databases.getDataSource());
     }
 
     @Override
@@ -93,7 +93,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
             String id = resultSet.getString(index++);
             String listenerId = resultSet.getString(index++);
             LocalDateTime expireDate = resultSet.getObject(index++, LocalDateTime.class);
-            List<String> arguments = Database.csvStringToArguments(resultSet.getString(index++));
+            List<String> arguments = Databases.csvStringToArguments(resultSet.getString(index++));
 
             return new ComponentEntity(id, listenerId, expireDate, arguments);
 
@@ -106,7 +106,7 @@ public final class ComponentDatabase extends AbstractDatabase<ComponentEntity> i
         return Errors.rethrow().wrap(statement -> {
             statement.setString(1, componentEntity.getListenerId());
             statement.setObject(2, componentEntity.getExpireDate());
-            statement.setString(3, Database.argumentsToCsvString(componentEntity.getArguments()));
+            statement.setString(3, Databases.argumentsToCsvString(componentEntity.getArguments()));
         });
     }
 }
