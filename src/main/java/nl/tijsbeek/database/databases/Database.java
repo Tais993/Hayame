@@ -7,6 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import nl.tijsbeek.config.Config;
+import nl.tijsbeek.database.tables.UserProfile;
 import org.flywaydb.core.Flyway;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NonNls;
@@ -37,6 +38,8 @@ public class Database {
     private final EmbedDatabase embedDatabase;
     private final ComponentDatabase componentDatabase;
     private final GuildSettingsDatabase guildSettingsDatabase;
+    private final UserSocialDatabase userSocialDatabase;
+    private final UserProfileDatabase userProfileDatabase;
 
     public Database(@NotNull final Config config) {
         HikariConfig hikariConfig = new HikariConfig();
@@ -58,6 +61,8 @@ public class Database {
         embedDatabase = new EmbedDatabase(this);
         componentDatabase = new ComponentDatabase(this);
         guildSettingsDatabase = new GuildSettingsDatabase(this);
+        userSocialDatabase = new UserSocialDatabase(this);
+        userProfileDatabase = new UserProfileDatabase(this);
     }
 
     /**
@@ -131,6 +136,14 @@ public class Database {
         return guildSettingsDatabase;
     }
 
+    public UserSocialDatabase getUserSocialDatabase() {
+        return userSocialDatabase;
+    }
+
+    public UserProfileDatabase getUserProfileDatabase() {
+        return userProfileDatabase;
+    }
+
     @NotNull
     @NonNls
     @Override
@@ -140,6 +153,8 @@ public class Database {
                 ", embedDatabase=" + embedDatabase +
                 ", componentDatabase=" + componentDatabase +
                 ", guildSettingsDatabase=" + guildSettingsDatabase +
+                ", userSocialDatabase=" + userSocialDatabase +
+                ", userProfileDatabase=" + userProfileDatabase +
                 '}';
     }
 }
