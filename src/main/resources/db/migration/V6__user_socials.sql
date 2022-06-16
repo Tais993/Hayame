@@ -4,7 +4,7 @@ CREATE TABLE user_socials
 
     platform_name VARCHAR(50),
     platform_icon VARCHAR(50),
-    platform_user_url VARCHAR(50),
+    platform_user_url VARCHAR(100),
     platform_user_name VARCHAR(50),
 
     FOREIGN KEY (id)

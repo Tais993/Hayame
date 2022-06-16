@@ -1,6 +1,7 @@
 package nl.tijsbeek.database.tables;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,8 +12,8 @@ public class UserSocial {
 
     private String platformName;
     private String platformIcon;
-    private String platformUserUrl;
-    private String platformUserName;
+    private String userUrl;
+    private String userName;
 
     @Contract(pure = true)
     public UserSocial(final long id) {
@@ -31,12 +32,12 @@ public class UserSocial {
         return platformIcon;
     }
 
-    public String getPlatformUserUrl() {
-        return platformUserUrl;
+    public String getUserUrl() {
+        return userUrl;
     }
 
-    public String getPlatformUserName() {
-        return platformUserName;
+    public String getUserName() {
+        return userName;
     }
 
 
@@ -61,22 +62,37 @@ public class UserSocial {
 
 
     public UserSocial setPlatformUser(@NotNull final String platformUserName, @Nullable final String platformUserUrl) {
-        setPlatformUserName(platformUserName);
-        setPlatformUserUrl(platformUserUrl);
+        setUserName(platformUserName);
+        setUserUrl(platformUserUrl);
         return this;
     }
 
-    public UserSocial setPlatformUserName(@NotNull final String platformUserName) {
-        this.platformUserName = Objects.requireNonNull(platformUserName, "PlatformUserName cannot be null!");
+    public UserSocial setUserName(@NotNull final String userName) {
+        this.userName = Objects.requireNonNull(userName, "PlatformUserName cannot be null!");
         return this;
     }
 
-    public UserSocial setPlatformUserUrl(@Nullable final String platformUserUrl) {
-        this.platformUserUrl = platformUserUrl;
+    public UserSocial setUserUrl(@Nullable final String userUrl) {
+        this.userUrl = userUrl;
         return this;
     }
 
 
+    public String toFormattedUrl() {
+        return "[%s %s](%s)".formatted(platformName, userName, userUrl);
+    }
+    @NonNls
+    @NotNull
+    @Override
+    public String toString() {
+        return "UserSocial{" +
+                "id=" + id +
+                ", platformName='" + platformName + '\'' +
+                ", platformIcon='" + platformIcon + '\'' +
+                ", platformUserUrl='" + userUrl + '\'' +
+                ", platformUserName='" + userName + '\'' +
+                '}';
+    }
 
     public enum Platforms {
         BITBUCKET("BitBucket", "https://seeklogo.com/images/B/bitbucket-logo-D072214725-seeklogo.com.png"),

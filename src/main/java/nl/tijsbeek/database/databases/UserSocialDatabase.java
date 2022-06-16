@@ -113,8 +113,8 @@ public class UserSocialDatabase extends AbstractDatabase<List<UserSocial>> imple
                 statement.setLong(1, userSocial.getId());
                 statement.setString(2, userSocial.getPlatformName());
                 statement.setString(3, userSocial.getPlatformIcon());
-                statement.setString(3, userSocial.getPlatformUserUrl());
-                statement.setString(3, userSocial.getPlatformUserName());
+                statement.setString(3, userSocial.getUserUrl());
+                statement.setString(3, userSocial.getUserName());
             }
         });
     }
