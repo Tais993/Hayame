@@ -56,7 +56,7 @@ public class UserProfileDatabase extends AbstractDatabase<UserProfile> implement
     @Override
     public void replace(@NotNull final UserProfile userProfile) {
         withoutReturn("""
-                REPLACE INTO discordbot.user_profiles (id, description, field_one_name, field_one_content, field_two_name, field_two_content, field_three_name, field_three_content) 
+                REPLACE INTO discordbot.user_profiles (id, description, field_one_name, field_one_content, field_two_name, field_two_content, field_three_name, field_three_content)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, setUserProfile(userProfile));
     }
