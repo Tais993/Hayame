@@ -37,9 +37,8 @@ dependencies {
 
 
     /* Discord */
-    implementation 'com.github.Xirado:JDA:36eea2a1c55f56ab2edfc8a5fde65921b67fc272'
     implementation 'com.sedmelluq:lavaplayer:1.3.78'
-//    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.9'
+    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.12'
     implementation('ch.qos.logback:logback-classic:1.2.11')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
