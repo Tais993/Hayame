@@ -59,11 +59,9 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
 
             argumentInserter.accept(statement);
 
-            statement.executeBatch();
+            ResultSet resultSet = statement.executeQuery();
 
-            ResultSet resultSet = statement.getResultSet();
-
-            if (!resultSet.first()) {
+            if (null == resultSet || !resultSet.first()) {
                 return null;
             }
 
@@ -91,7 +89,7 @@ public abstract class AbstractDatabase<Entity> implements IDatabase<Entity> {
 
             argumentInserter.accept(statement);
 
-            statement.executeBatch();
+            statement.executeQuery();
 
         } catch (final SQLException e) {
             throw new RuntimeException(e);
