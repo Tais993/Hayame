@@ -1,92 +1,39 @@
-import groovy.json.JsonSlurper
-
-buildscript {
-    dependencies {
-        classpath 'com.h2database:h2:1.4.197'
-        classpath 'org.codehaus.groovy:groovy-json:3.0.9'
-
-        /* DB */
-        classpath 'org.flywaydb:flyway-core:8.5.10'
-        classpath 'org.flywaydb:flyway-mysql:8.5.10'
-        classpath 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
-    }
-}
-
-
 plugins {
     id 'java'
-    id 'application'
-    id 'org.flywaydb.flyway' version '8.5.2'
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
 }
 
-
-mainClassName = 'nl.tijsbeek.Application'
 group 'nl.tijsbeek'
 version '1.0-SNAPSHOT'
-
-
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://m2.dv8tion.net/releases' }
-}
-
-dependencies {
-    implementation 'org.jetbrains:annotations:23.0.0'
-
-
-    /* Discord */
-    implementation 'com.sedmelluq:lavaplayer:1.3.78'
-    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.12'
-    implementation('ch.qos.logback:logback-classic:1.2.11')
-
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
-    implementation 'com.opencsv:opencsv:5.6'
-
-    implementation 'com.diffplug.durian:durian:3.4.0'
-
-
-    /* DB */
-    implementation 'org.flywaydb:flyway-core:8.5.10'
-    implementation 'org.flywaydb:flyway-mysql:8.5.10'
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
-    implementation 'com.zaxxer:HikariCP:5.0.1'
-
-
-    /* Prometheus */
-    implementation 'io.prometheus:simpleclient:0.15.0'
-    implementation 'io.prometheus:simpleclient_hotspot:0.15.0'
-    implementation 'io.prometheus:simpleclient_httpserver:0.15.0'
-    implementation 'io.prometheus:simpleclient_pushgateway:0.15.0'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testImplementation 'org.mockito:mockito-core:4.5.1'
-}
-
 
 test {
     useJUnitPlatform()
 }
 
+subprojects {
+    apply plugin: "java"
 
 
-flyway {
-    final String configLocation = System.getenv('hamaye.config.location')
+    group = rootProject.group
+    version = rootProject.version
 
-    final File jsonFile = file(configLocation)
-    final def parsedJson = new JsonSlurper().parseText(jsonFile.text)
+    repositories {
+        mavenCentral()
+    }
 
-    url = 'jdbc:mariadb://localhost:' + parsedJson.database_port
-    user = parsedJson.database_username
-    password = parsedJson.database_password
-    schemas = ['discordbot']
-}
+    dependencies {
+        implementation 'org.jetbrains:annotations:23.0.0'
+        implementation 'ch.qos.logback:logback-classic:1.2.11'
+        implementation 'net.dv8tion:JDA:5.0.0-alpha.21'
 
-compileJava {
-    options.encoding = 'UTF-8'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    }
 
-    sourceCompatibility = 17
-    targetCompatibility = 17
+
+    compileJava({
+        options.encoding = 'UTF-8'
+
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
+    })
 }
