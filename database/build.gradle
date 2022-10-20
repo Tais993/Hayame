@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':config')
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2.2'
+    implementation 'com.opencsv:opencsv:5.6'
+
+    implementation 'com.diffplug.durian:durian:3.4.0'
+    implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.12'
+
+    /* DB */
+    implementation 'org.flywaydb:flyway-core:8.5.10'
+    implementation 'org.flywaydb:flyway-mysql:8.5.10'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.4'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}

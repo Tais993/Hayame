@@ -1,1 +1,3 @@
 rootProject.name = 'Hayame'
+include 'database', 'bot', 'config'
+
